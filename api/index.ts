@@ -1,41 +1,42 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import resolvers from '../schema/resolvers';
+import resolvers from '../schema/resolvers/index.resolver';
 import connectDB from '../dataLayer';
-import { readFileSync } from 'fs';
-
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
-
-const typeDefs = readFileSync("./schema/schema.graphql", {
-  encoding: "utf-8"
-})
+import typeDefs from '../schema/typeDefs/index.typeDef'
+import verifyUser from '../utilities/verifyUser';
+import { CustomJwtPayload, MyContext } from '../typeDefs';
 
 
-const server = new ApolloServer({
+const server = new ApolloServer<MyContext>({
   typeDefs,
   resolvers,
+  introspection: true,
 });
-
-
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
-
-
 
 async function startServer() {
   connectDB()
 
-
   const { url } = await startStandaloneServer(server, {
     listen: { port: 3000 },
+    context: async ({ req, res }) => {
+
+      const token = req.headers.token || ''
+
+      
+      if (token) {
+        const user: CustomJwtPayload | null = verifyUser(token as string)
+        console.log(user);
+        
+        if (user && user.admin) {
+          return { admin: user.admin }
+        }
+      }
+        return {}
+    },
   });
 
   console.log(`🚀  Server ready at: ${url}`);
 
 }
-
 
 startServer()

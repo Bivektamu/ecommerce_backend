@@ -1,7 +1,6 @@
-import Customer from "../dataLayer/schema/Customer";
+import Customer from "../../dataLayer/schema/Customer";
 
-import { SignOptions, sign } from 'jsonwebtoken'
-const resolvers = {
+const customerRresolver = {
   Query: {
     customers: async () => {
       const customers = await Customer.find()
@@ -49,43 +48,9 @@ const resolvers = {
           }
         }
       }
-    },
-    logIn: async (parent:any, args:any) => {
-      const {email, password} = args.input
-      if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-        const payload = {
-          admin: {
-            id: process.env.ADMIN_ID
-          }
-        }
-
-        const signOptions:SignOptions = {
-          expiresIn: 360000 
-        }
-        const secret:string = process.env.JWTSECRET as string
-
-        const token = sign(
-          payload,
-          secret,
-          signOptions
-        );
-
-        console.log(token);
-        
-        return {
-          success: true,
-          value: token
-        }
-      }
-      else {
-        return {
-          success: false,
-          message:'Bad credentials'
-        }
-      }
-
     }
+    
   }
 };
 
-export default resolvers
+export default customerRresolver

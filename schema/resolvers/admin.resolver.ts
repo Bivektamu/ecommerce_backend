@@ -4,8 +4,9 @@ const adminRresolver = {
   Mutation: {
     logInAdmin: async (parent: any, args: any) => {
       const { email, password } = args.input
-
-      console.log(email, password);
+      
+      console.log(email , process.env.ADMIN_EMAIL);
+      
 
       if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
         const payload = {
@@ -23,9 +24,11 @@ const adminRresolver = {
           payload,
           secret,
           signOptions
+        
         );
 
-        console.log(token);
+        console.log('asdfasdfasdf');
+        
 
         return {
           token

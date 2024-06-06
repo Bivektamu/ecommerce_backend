@@ -8,31 +8,28 @@ import path from 'path';
 import fs from 'fs'
 const globalResolver = {
     Upload: GraphQLUpload,
-    // Mutation: {
-    //     uploadFile: async (parent: any, args: any) => {
+    Mutation: {
+        uploadFile: async (parent: any, args: any) => {
 
-    //         const file = await args.input.file
-
-    //         console.log(file);
+            const file = await args.input.file
             
             
-    //         const { createReadStream, filename, mimetype, encoding } = file;
-    //         const stream = createReadStream()
+            const { createReadStream, filename, mimetype, encoding } = file;
+            const stream = createReadStream()
 
-    //         const pathName = path.join(process.cwd(), `public/images/${filename}`)
+            const pathName = path.join(process.cwd(), `public/images/${filename}`)
 
-    //         await stream.pipe(fs.createWriteStream(pathName))
+            await stream.pipe(fs.createWriteStream(pathName))
 
-    //         return {
-    //             url:`http://localhost:3000/images/${filename}`
-    //         }
-    //     },
+            return {
+                url:`http://localhost:3000/images/${filename}`
+            }
+        },
 
       
-    // },
+    },
     Query: {
         getAuthStatus: (parent: any, args: any, context: any) => {
-            
 
             if (!context.token) {
                 return { isLoggedIn: false }

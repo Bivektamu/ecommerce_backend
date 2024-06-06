@@ -34,6 +34,17 @@ const globalTypeDef = gql`
     getAuthStatus: getAuthStatusPayload
   }
 scalar Upload
+input Img {
+  file:Upload!
+}   
+type ImgUrl {
+  url:String!
+}
+scalar Upload
+  type Mutation {
+    uploadFile(input:Img!):ImgUrl!
+  }
+    
   `
 
 export default globalTypeDef

@@ -26,3 +26,8 @@ export interface CustomJwtPayload extends JwtPayload {
     admin?: Omit<Admin, 'password'>
     customer?: Omit<Customer, 'password'>
 }
+
+export interface inputProductImg {
+    id:string,
+    img:any
+}

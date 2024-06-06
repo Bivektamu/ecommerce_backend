@@ -12,9 +12,9 @@ const verifyUser = (token: string) => {
                 lastName:'AdminLastName',
                 email:process.env.ADMIN_EMAIL as string
             }
-            return {admin}
+            return admin
         }
-        return user.customer as Customer
+        return user.customer as Omit<Customer, 'password'>
     }
     return null
     // return user

@@ -9,30 +9,52 @@ const productTypeDef = gql`
         WHITE,
         AMBER 
     }
+    enum Size {
+        S,
+        M,
+        L,
+        XL
+    }
+    type ProductImg {
+        id:ID!
+        url:String!
+        fileName:String!
+    }
+   
     type Product {
-        id: ID,
-        title: String,
-        slug: String,
-        description: String,
-        password: String,
-        colors: [Color],
-        price: Number,
-        quantity: Number,
-        sku: String,
-        stockStatus: Boolean,
-        featured: Boolean
+        id: ID!,
+        title: String!,
+        slug: String!,
+        description: String!,
+        colors: [Color!]!,
+        sizes: [Size!]!,
+        price: Int!,
+        quantity: Int!,
+        imgs:[ProductImg!]!,
+        category:String!,
+        sku: String!,
+        stockStatus: Boolean!,
+        featured: Boolean!
+    }
+
+    input inputProductImg {
+        id:ID!,
+        img:Upload!
     }
 
     input CreateProduct {
-        title: String,
-        slug: String,
-        description: String,
-        colors: [Color],
-        price: Number,
-        quantity: Number,
-        sku: String,
-        stockStatus: Boolean,
-        featured: Boolean
+        title: String!,
+        slug: String!,
+        description: String!,
+        colors: [Color!]!,
+        sizes: [Size!]!,
+        price: Int!,
+        quantity: Int!,
+        category:String!,
+        sku: String!,
+        stockStatus: Boolean!,
+        featured: Boolean!,
+        imgs:[inputProductImg!]!,
     }
 
     type Query {
@@ -41,7 +63,7 @@ const productTypeDef = gql`
     }
 
     type Mutation {
-        createProduct(input:Createproduct): Product
+        createProduct(input:CreateProduct): ReturnType
         deleteProduct(id: ID): ReturnType
     }
 `

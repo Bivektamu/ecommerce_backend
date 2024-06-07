@@ -45,8 +45,6 @@ const productResolver = {
 
       const { title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, imgs } = args.input
 
-      console.log(typeof price);
-
 
       const productExists = await Product.findOne({ slug: slug.toLowerCase() })
       if (productExists) {
@@ -55,11 +53,10 @@ const productResolver = {
 
       const folder = `public/upload/product`
 
-
       let newImgs = []
 
       try {
-        const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, folder))
+        const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
         newImgs = await Promise.all(uploadPromises);
       } catch (error) {
         throw error

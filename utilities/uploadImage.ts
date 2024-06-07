@@ -3,35 +3,36 @@ import fs from 'fs'
 import { inputProductImg } from "../typeDefs";
 import mongoose from "mongoose";
 
-const uploadImage = async (item: inputProductImg, folder: string) => {
-    const file = await item.img
+const uploadImage = async (item: inputProductImg, folder: string, name: string) => {
+  const file = await item.img
 
-    const { createReadStream, filename, mimetype, encoding } = file;
-    const stream = createReadStream()
+  const { createReadStream, filename} = file;
 
-    const directory = path.join(process.cwd(), folder)
+  const stream = createReadStream()
+  const directory = path.join(process.cwd(), folder)
 
-      // Check if the directory exists
-      if (!fs.existsSync(directory)) {
-        // Create the directory (and any necessary subdirectories)
-        fs.mkdirSync(directory, { recursive: true });
-      }
+  // Check if the directory exists
+  if (!fs.existsSync(directory)) {
+    // Create the directory (and any necessary subdirectories)
+    fs.mkdirSync(directory, { recursive: true });
+  }
 
-    const pathName = path.join(directory, filename as string)
 
-    console.log(pathName);
-    
+  let newName = filename as string
+  newName = name + '-' + item._id + path.extname(filename)
 
-    stream.pipe(fs.createWriteStream(pathName))
+  const pathName = path.join(directory, newName)
 
-    const url = `http://localhost:3000${folder.replace('public','')}/${filename}`
+  stream.pipe(fs.createWriteStream(pathName))
 
-    const uploadedImage = {
-        _id: new mongoose.Types.ObjectId(item._id) ,
-        url,
-        fileName: filename
-    }
-    return uploadedImage
+  const url = `http://localhost:3000${folder.replace('public', '')}/${newName}`
+
+  const uploadedImage = {
+    _id: new mongoose.Types.ObjectId(item._id),
+    url,
+    fileName: filename
+  }
+  return uploadedImage
 }
 
 export default uploadImage

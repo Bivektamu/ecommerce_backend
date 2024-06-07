@@ -1,4 +1,5 @@
 import { JwtPayload} from "jsonwebtoken"
+import { ObjectId } from "mongoose"
 
 export type Customer = {
     id: String
@@ -28,6 +29,12 @@ export interface CustomJwtPayload extends JwtPayload {
 }
 
 export interface inputProductImg {
-    id:string,
+    _id:string,
     img:any
+}
+
+export interface ProductImage {
+    _id: ObjectId,
+    url: string,
+    fileName:string
 }

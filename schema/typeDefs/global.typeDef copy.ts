@@ -7,7 +7,6 @@ const globalTypeDef = gql`
         value:String
     }
     
-    
     input SignInInput {
       email:String,
       password: String

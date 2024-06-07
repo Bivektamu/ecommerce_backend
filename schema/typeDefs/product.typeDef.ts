@@ -38,7 +38,7 @@ const productTypeDef = gql`
     }
 
     input inputProductImg {
-        id:ID!,
+        _id:ID!,
         img:Upload!
     }
 
@@ -63,7 +63,7 @@ const productTypeDef = gql`
     }
 
     type Mutation {
-        createProduct(input:CreateProduct): ReturnType
+        createProduct(input:CreateProduct): Product
         deleteProduct(id: ID): ReturnType
     }
 `

@@ -15,6 +15,7 @@ const productResolver = {
       }
 
       const admin = verifyUser(context.token)
+      
       if (!admin) {
         throw new Error('Not Authenticated')
       }

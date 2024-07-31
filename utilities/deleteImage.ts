@@ -12,8 +12,6 @@ const deleteImage = async (image: string) => {
     if(err instanceof Error)
       console.log(err.message);
   }
-  
-
 }
 
 export default deleteImage

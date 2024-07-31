@@ -17,7 +17,6 @@ const uploadImage = async (item: inputProductImg, folder: string, name: string) 
     fs.mkdirSync(directory, { recursive: true });
   }
 
-
   let newName = filename as string
   newName = name + '-' + item._id + path.extname(filename)
 

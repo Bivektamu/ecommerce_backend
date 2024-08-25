@@ -5,8 +5,6 @@ const adminRresolver = {
     logInAdmin: async (parent: any, args: any) => {
       const { email, password } = args.input
       
-      console.log(email , process.env.ADMIN_EMAIL);
-      
 
       if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
         const payload = {
@@ -26,9 +24,6 @@ const adminRresolver = {
           signOptions
         
         );
-
-        console.log('asdfasdfasdf');
-        
 
         return {
           token

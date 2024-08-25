@@ -4,7 +4,7 @@ import path from "path";
 import Product from "../../dataLayer/schema/Product";
 import verifyUser from "../../utilities/verifyUser";
 import uploadImage from "../../utilities/uploadImage";
-import { inputProductImg } from '../../typeDefs';
+import { inputProductImg, ProductImage } from '../../typeDefs';
 import deleteImage from '../../utilities/deleteImage';
 
 const productResolver = {
@@ -15,7 +15,7 @@ const productResolver = {
       }
 
       const admin = verifyUser(context.token)
-      
+
       if (!admin) {
         throw new Error('Not Authenticated')
       }
@@ -35,6 +35,7 @@ const productResolver = {
 
   Mutation: {
     createProduct: async (parent: any, args: any, context: any) => {
+
       if (!context.token) {
         throw new Error('Not Authenticated')
       }
@@ -44,30 +45,114 @@ const productResolver = {
         throw new Error('Not Authenticated')
       }
 
-      const { title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, imgs } = args.input
-
-
-      const productExists = await Product.findOne({ slug: slug.toLowerCase() })
-      if (productExists) {
-        throw new Error('Product Already Exists')
-      }
-
-      const folder = `public/upload/product`
-
-      let newImgs = []
-
       try {
-        const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
-        newImgs = await Promise.all(uploadPromises);
+
+
+
+        const { title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, imgs } = args.input
+
+
+        const productExists = await Product.findOne({ slug: slug.toLowerCase() })
+        if (productExists) {
+          throw new Error('Product Already Exists')
+        }
+
+        const folder = `public/upload/product`
+
+        let newImgs = []
+
+        try {
+          const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
+          newImgs = await Promise.all(uploadPromises);
+        } catch (error) {
+          throw error
+        }
+
+        const newProduct = new Product({
+          title, slug, description, colors, sizes, price, quantity, category, sku, stockStatus, featured, imgs: newImgs
+        })
+
+        return await newProduct.save()
       } catch (error) {
-        throw error
+        if (error) {
+          console.log(error);
+
+          throw error
+        }
+      }
+    },
+
+    editProduct: async (parent: any, args: any, context: any) => {
+      try {
+
+
+
+        if (!context.token) {
+          throw new Error('Not Authenticated')
+        }
+
+        const admin = verifyUser(context.token)
+        if (!admin) {
+          throw new Error('Not Authenticated')
+        }
+
+
+
+        const { title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, newImgs, oldImgs, id } = args.input
+
+        console.log(title);
+
+
+        const productExists = await Product.findById(id)
+        if (!productExists) {
+          throw new Error('Product does not Exist')
+        }
+
+        let toUpdateImgs = [...oldImgs]
+
+        // loop thorugh old images and filter out if its its exists in new images or not
+        if (productExists?.imgs.length > oldImgs.length) {
+          const imgToDeleteURL = productExists?.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.url)
+          imgToDeleteURL.map(url => deleteImage(url))
+        }
+
+        
+        if (newImgs.length > 0) {
+          const folder = `public/upload/product`
+
+          try {
+            const uploadPromises = newImgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
+            const uploadedImgs = await Promise.all(uploadPromises);
+            toUpdateImgs = [...toUpdateImgs, ...uploadedImgs]
+
+          } catch (error) {
+            throw error
+          }
+        }
+
+
+        try {
+          const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            {
+              title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, imgs: toUpdateImgs
+            },
+            { new: true }
+          )
+
+          return updatedProduct
+
+        } catch (error) {
+          if (error) throw error
+        }
+      } catch (error) {
+        if (error) {
+          console.log(error);
+          throw error
+
+        }
       }
 
-      const newProduct = new Product({
-        title, slug, description, colors, sizes, price, quantity, category, sku, stockStatus, featured, imgs: newImgs
-      })
-
-      return await newProduct.save()
     },
 
     // Delete Product Mutation

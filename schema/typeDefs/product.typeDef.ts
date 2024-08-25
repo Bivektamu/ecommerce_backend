@@ -1,5 +1,8 @@
 import gql from "graphql-tag";
+// input EditProduct {
 
+//     newImgs:[inputProductImgWithUrl!],
+// }
 const productTypeDef = gql`
 
     enum Color {
@@ -42,6 +45,12 @@ const productTypeDef = gql`
         img:Upload!
     }
 
+     input inputProductImgWithUrl {
+        id:ID!
+        url:String!
+        fileName:String!
+    }
+
     input CreateProduct {
         title: String!,
         slug: String!,
@@ -57,6 +66,23 @@ const productTypeDef = gql`
         imgs:[inputProductImg!]!,
     }
 
+    input EditProduct {
+        id:ID!,
+        title: String!,
+        slug: String!,
+        description: String!,
+        colors: [Color!]!,
+        sizes: [Size!]!,
+        price: Int!,
+        quantity: Int!,
+        category:String!,
+        sku: String!,
+        stockStatus: Boolean!,
+        featured: Boolean!,
+        oldImgs:[inputProductImgWithUrl!],
+        newImgs:[inputProductImg!],
+    }
+
     type Query {
         products: [Product],
         product(id:ID): Product,
@@ -65,6 +91,8 @@ const productTypeDef = gql`
     type Mutation {
         createProduct(input:CreateProduct): Product
         deleteProduct(id: ID): ReturnType
+        editProduct(input:EditProduct): Product
+
     }
 `
 

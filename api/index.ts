@@ -21,7 +21,9 @@ const app = express();
 
 
 app.use(express.static('public'))
-app.use(graphqlUploadExpress());
+app.use(graphqlUploadExpress({
+  overrideSendResponse: false 
+}));
 
 const httpServer = http.createServer(app);
 

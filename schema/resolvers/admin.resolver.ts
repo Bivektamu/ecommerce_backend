@@ -7,13 +7,7 @@ const adminRresolver = {
 
 
       // if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      if (email === 'admin@gmail.com' && password === 'password123') {
-        console.log('ADMIN_EMAIL', process.env.ADMIN_EMAIL);
-        console.log('MONGO_URI', process.env.MONGO_URI);
-        console.log('ADMIN_ID', process.env.ADMIN_ID);
-        console.log('ADMIN_PASSWORD', process.env.ADMIN_PASSWORD);
-        console.log('JWTSECRET', process.env.JWTSECRET);
-        
+      if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
         const payload = {
           admin: {
             id: process.env.ADMIN_ID

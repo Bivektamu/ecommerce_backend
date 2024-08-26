@@ -1,12 +1,13 @@
 import { SignOptions, sign } from 'jsonwebtoken'
 const adminRresolver = {
- 
+
   Mutation: {
     logInAdmin: async (parent: any, args: any) => {
       const { email, password } = args.input
-      
 
-      if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+
+      // if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      if (email === 'admin@gmail.com' && password === 'password123') {
         const payload = {
           admin: {
             id: process.env.ADMIN_ID
@@ -22,7 +23,7 @@ const adminRresolver = {
           payload,
           secret,
           signOptions
-        
+
         );
 
         return {

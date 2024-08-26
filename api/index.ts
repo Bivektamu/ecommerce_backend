@@ -51,7 +51,7 @@ async function startServer() {
 
 
     await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));
-    console.log(`🚀 Server ready at http://localhost:3000/`);
+    console.log(`🚀 Server ready`);
 
   // const { url } = await startStandaloneServer(server, {
   //   listen: { port: 3000 },

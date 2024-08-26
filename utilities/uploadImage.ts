@@ -29,7 +29,7 @@ const uploadImage = async (item: inputProductImg, folder: string, name: string) 
 
     stream.pipe(fs.createWriteStream(pathName))
 
-    const url = `http://localhost:3000${folder.replace('public', '')}/${newName}`
+    const url = `https://ecommerce-backend-ruby-rho.vercel.app${folder.replace('public', '')}/${newName}`
 
     const uploadedImage = {
       _id: item._id,

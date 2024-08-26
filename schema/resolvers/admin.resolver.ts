@@ -8,6 +8,8 @@ const adminRresolver = {
 
       // if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
       if (email === 'admin@gmail.com' && password === 'password123') {
+        console.log(process.env);
+        
         const payload = {
           admin: {
             id: process.env.ADMIN_ID

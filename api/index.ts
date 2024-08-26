@@ -16,7 +16,6 @@ import verifyUser from '../utilities/verifyUser';
 import { CustomJwtPayload, MyContext } from '../typeDefs';
 
 
-
 const app = express();
 
 

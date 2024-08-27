@@ -3,41 +3,54 @@ import fs from 'fs'
 import { inputProductImg } from "../typeDefs";
 import mongoose from "mongoose";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"; // ES Modules import
-
+import {Upload} from "@aws-sdk/lib-storage"
 
 
 const uploadImage = async (item: inputProductImg, folder: string, name: string) => {
 
 
+
+  const file = await item.img
+
+  const { createReadStream, filename, mimetype, encoding } = await file;
+
+
+
+
+  const config = {
+    region: process.env.AWS_REGION as string,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
+
+  }
+
+
   try {
 
-    const file = await item.img
-
-    const yourBufferData = Buffer.from(file, 'base64');
-
-
-    
-    
-    const config = {
-      region: process.env.AWS_REGION as string,
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
-
-    }
-
-    
-    
-    const client = new S3Client(config);
+    const aws_client = new S3Client(config);
 
     const input = { // PutObjectRequest
-      Bucket: process.env.AWS_BUCKET,
-      Key: item._id,
-      Body: yourBufferData
+      // ContentType: mimetype,
+      Bucket: process.env.AWS_BUCKET as string,
+      Key: filename,
+      Body: createReadStream()
     }
-    const data = await client.send(new PutObjectCommand(input));
-    console.log('File uploaded successfully:', data);
+    const upload = new Upload({
+      client: aws_client,
+      params: input
+    })
+    
+    const data = await upload.done()
 
-    throw new Error("Working.");
+    const url = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${filename}`
+
+    const uploadedImage = {
+      _id: item._id,
+      url,
+      fileName: filename
+    }
+
+    return uploadedImage
 
   } catch (error) {
     console.error('Error uploading file:', error);

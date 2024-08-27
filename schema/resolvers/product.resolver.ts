@@ -47,10 +47,7 @@ const productResolver = {
 
       try {
 
-
-
         const { title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, imgs } = args.input
-
 
         const productExists = await Product.findOne({ slug: slug.toLowerCase() })
         if (productExists) {
@@ -85,8 +82,6 @@ const productResolver = {
     editProduct: async (parent: any, args: any, context: any) => {
       try {
 
-
-
         if (!context.token) {
           throw new Error('Not Authenticated')
         }
@@ -96,12 +91,7 @@ const productResolver = {
           throw new Error('Not Authenticated')
         }
 
-
-
         const { title, slug, description, colors, sizes, price, category, quantity, sku, stockStatus, featured, newImgs, oldImgs, id } = args.input
-
-        console.log(title);
-
 
         const productExists = await Product.findById(id)
         if (!productExists) {
@@ -112,11 +102,10 @@ const productResolver = {
 
         // loop thorugh old images and filter out if its its exists in new images or not
         if (productExists?.imgs.length > oldImgs.length) {
-          const imgToDeleteURL = productExists?.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.url)
-          imgToDeleteURL.map(url => deleteImage(url))
+          const imgToDelete = productExists?.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.fileName)
+          imgToDelete.map(img => deleteImage(img))
         }
 
-        
         if (newImgs.length > 0) {
           const folder = `public/upload/product`
 
@@ -172,9 +161,9 @@ const productResolver = {
       try {
         const product = await Product.findById(id)
         if (product) {
-          const imgLinks = product?.imgs.map(img => img.url)
+          const imgstoDelete = product?.imgs.map(img => img.fileName)
 
-          imgLinks.map(link => deleteImage(link))
+          imgstoDelete.map(img => deleteImage(img))
 
           const productExists = await Product.findByIdAndDelete(id)
           if (productExists) {

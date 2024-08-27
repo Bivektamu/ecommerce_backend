@@ -1,16 +1,25 @@
-import path from "path";
 import fs from 'fs'
 import { ProductImage, inputProductImg } from "../typeDefs";
 import mongoose from "mongoose";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3"; // ES Modules import
 
 const deleteImage = async (image: string) => {
-  const link = image.split('upload')[1]
-  const imgPath = path.join(process.cwd(), 'public/upload', link)
+
+  const config = {
+    region: process.env.AWS_REGION as string,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
+  }
+
   try {
-    fs.unlinkSync(imgPath);
-  } catch (err ) {
-    if(err instanceof Error)
+    const aws_client = new S3Client(config);
+    const input = { Bucket: process.env.AWS_BUCKET as string, Key: image }
+    const data = await aws_client.send(new DeleteObjectCommand(input));
+    console.log("Success. Object deleted.", data);
+  } catch (err) {
+    if (err instanceof Error)
       console.log(err.message);
+      throw err
   }
 }
 

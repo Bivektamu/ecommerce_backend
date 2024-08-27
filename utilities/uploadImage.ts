@@ -2,55 +2,50 @@ import path from "path";
 import fs from 'fs'
 import { inputProductImg } from "../typeDefs";
 import mongoose from "mongoose";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"; // ES Modules import
-import {Upload} from "@aws-sdk/lib-storage"
+import { S3Client} from "@aws-sdk/client-s3"; // ES Modules import
+import { Upload } from "@aws-sdk/lib-storage"
 
 
 const uploadImage = async (item: inputProductImg, folder: string, name: string) => {
 
-
-
   const file = await item.img
-
   const { createReadStream, filename, mimetype, encoding } = await file;
 
-
-
+  let newName = filename as string
+  newName = name + '-' + item._id + path.extname(filename)
 
   const config = {
     region: process.env.AWS_REGION as string,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
-
   }
 
-
   try {
-
     const aws_client = new S3Client(config);
-
     const input = { // PutObjectRequest
-      // ContentType: mimetype,
+      ContentType: mimetype,
       Bucket: process.env.AWS_BUCKET as string,
-      Key: filename,
+      Key: newName,
       Body: createReadStream()
     }
     const upload = new Upload({
       client: aws_client,
       params: input
     })
-    
+
     const data = await upload.done()
 
-    const url = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${filename}`
+    if (data) {
+      const url = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${newName}`
 
-    const uploadedImage = {
-      _id: item._id,
-      url,
-      fileName: filename
+      const uploadedImage = {
+        _id: item._id,
+        url,
+        fileName: newName
+      }
+      return uploadedImage
     }
 
-    return uploadedImage
 
   } catch (error) {
     console.error('Error uploading file:', error);

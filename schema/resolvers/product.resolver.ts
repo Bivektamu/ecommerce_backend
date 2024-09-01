@@ -10,15 +10,15 @@ import deleteImage from '../../utilities/deleteImage';
 const productResolver = {
   Query: {
     products: async (parent: any, args: any, context: any) => {
-      if (!context.token) {
-        throw new Error('Not Authenticated')
-      }
+      // if (!context.token) {
+      //   throw new Error('Not Authenticated')
+      // }
 
-      const admin = verifyUser(context.token)
+      // const admin = verifyUser(context.token)
 
-      if (!admin) {
-        throw new Error('Not Authenticated')
-      }
+      // if (!admin) {
+      //   throw new Error('Not Authenticated')
+      // }
       const products = await Product.find()
       return products
     },

@@ -1,4 +1,7 @@
 import Customer from "../../dataLayer/schema/Customer";
+import { FormError, ValidateSchema } from "../../typeDefs";
+import validateForm from "../../utilities/validateForm";
+import bcrypt from 'bcrypt'
 
 const customerRresolver = {
   Query: {
@@ -15,16 +18,35 @@ const customerRresolver = {
   Mutation: {
     createCustomer: async (parent: any, args: any) => {
       const { email, password, firstName, lastName } = args.input
+
+      const validateSchema: ValidateSchema<any>[] = [
+        { value: firstName, name: 'firstName', type: 'string' },
+        { value: lastName, name: 'lastName', type: 'string' },
+        { value: email, name: 'email', type: 'email' },
+        { value: password, name: 'password', type: 'password' },
+      ]
+      const errors: FormError = validateForm(validateSchema)
+      if (Object.keys(errors).length > 0) {
+        throw new Error(JSON.stringify(errors))
+      }
+
       const customerExists = await Customer.findOne({ email: email.toLowerCase() })
       if (customerExists) {
-        return null
+        throw new Error('User already exists')
       }
+
+
+
       const customer = new Customer({
         firstName,
         lastName,
-        email,
+        email: email.toLowerCase(),
         password
       })
+
+      const salt = bcrypt.genSaltSync(8)
+
+      customer.password = bcrypt.hashSync(password, salt)
 
       return await customer.save()
     },
@@ -32,8 +54,8 @@ const customerRresolver = {
       const { id } = args
 
       try {
-        const a = await Customer.findByIdAndDelete(id)
-        if (a) {
+        const deletedUser = await Customer.findByIdAndDelete(id)
+        if (deletedUser) {
           return {
             success: true,
           }
@@ -49,7 +71,7 @@ const customerRresolver = {
         }
       }
     }
-    
+
   }
 };
 

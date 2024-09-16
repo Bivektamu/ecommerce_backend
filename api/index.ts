@@ -46,9 +46,6 @@ async function startServer() {
       context: async ({ req }) => ({ token:req.headers.token }),
     }));
 
-    
-
-
     await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));
     console.log(`🚀 Server ready`);
 

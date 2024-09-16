@@ -8,26 +8,14 @@ const globalTypeDef = gql`
     }
     
     
-    input SignInInput {
-      email:String,
-      password: String
+    input LogInInput {
+      email:String!,
+      password: String!
     }
-
-    type AdminContext {
-      id: ID
-      firstName: String
-      lastName: String
-      email: String
-    }
-
-    type Context {
-      user: String,
-      admin:AdminContext
-    }
-    
     
     type getAuthStatusPayload {
-      isLoggedIn: Boolean
+      isLoggedIn: Boolean!,
+      user: String
     }
     
   type Query {

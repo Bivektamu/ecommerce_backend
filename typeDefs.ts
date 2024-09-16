@@ -9,6 +9,11 @@ export type Customer = {
     password: String
 }
 
+export enum User {
+    ADMIN = 'ADMIN',
+    CUSTOMER = 'CUSTOMER',
+}
+
 export type Admin = {
     id: String
     firstName: String,
@@ -37,4 +42,15 @@ export interface ProductImage {
     _id: ObjectId,
     url: string,
     fileName:string
+}
+
+export interface FormError {
+    [key:string] : string
+}
+
+export interface ValidateSchema<T> {
+    name: string,
+    type: string,
+    value: T,
+    msg?:string
 }

@@ -1,6 +1,6 @@
 
 import { GraphQLUpload } from 'graphql-upload-ts'
-import adminRresolver from "./admin.resolver";
+import adminRresolver from "./auth.resolver";
 import customerRresolver from "./customer.resolver";
 import productResolver from './product.resolver';
 import verifyUser from '../../utilities/verifyUser';

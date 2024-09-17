@@ -15,7 +15,7 @@ const globalTypeDef = gql`
     
     type getAuthStatusPayload {
       isLoggedIn: Boolean!,
-      user: String
+      userRole: String
     }
     
   type Query {

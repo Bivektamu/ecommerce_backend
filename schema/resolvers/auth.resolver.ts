@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt'
 const authResolver = {
   Mutation: {
     logInAdmin: async (parent: any, args: any, context: any) => {
+console.log('asdf');
 
       const { email, password } = args.input
 
@@ -101,10 +102,10 @@ const authResolver = {
       const { user } = verifyUser(context.token)
 
       if (!user) {
-        return { isLoggedIn: false, user: null }
+        return { isLoggedIn: false, userRole: null }
       }
 
-      return { isLoggedIn: true, user: user }
+      return { isLoggedIn: true, userRole: user }
     }
   },
 };

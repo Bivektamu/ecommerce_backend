@@ -8,7 +8,7 @@ const verifyUser = (token: string) => {
         if (userVerified.admin) {
             return { user: User.ADMIN }
         }
-        return { user: User.CUSTOMER }
+        return { user: userVerified.customer?.id }
         // return user.customer as Omit<Customer, 'password'>
     }
     return { user: null }

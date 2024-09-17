@@ -9,7 +9,7 @@ const customerTypeDef = gql`
         password: String
     }
 
-    input CreateCustomer {
+    input CustomerInput {
         firstName: String!,
         lastName: String!,
         email:String!,
@@ -22,7 +22,7 @@ const customerTypeDef = gql`
     }
 
     type Mutation {
-        createCustomer(input:CreateCustomer): Customer
+        createCustomer(input:CustomerInput): Customer
         deleteCustomer(id: ID): ReturnType
     }
 `

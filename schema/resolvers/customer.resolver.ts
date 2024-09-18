@@ -1,15 +1,30 @@
 import Customer from "../../dataLayer/schema/Customer";
-import { FormError, ValidateSchema } from "../../typeDefs";
+import { FormError, User, ValidateSchema } from "../../typeDefs";
 import validateForm from "../../utilities/validateForm";
 import bcrypt from 'bcrypt'
+import verifyUser from "../../utilities/verifyUser";
 
 const customerRresolver = {
   Query: {
-    customers: async () => {
+    customers: async (parent: any, args: any, context: any) => {
+      if (!context.token) {
+        throw new Error('Not Authenticated')
+      }
+      const user = verifyUser(context.token)
+      if (user?.userRole !== User.ADMIN) {
+        throw new Error('Not Authenticated')
+      }
       const customers = await Customer.find()
       return customers
     },
-    customer: async (parent: any, args: any) => {
+    customer: async (parent: any, args: any, context: any) => {
+      if (!context.token) {
+        throw new Error('Not Authenticated')
+      }
+      const user = verifyUser(context.token)
+      if (!user) {
+        throw new Error('Not Authenticated')
+      }
       const id = args.id
       const findCustomer = await Customer.findById(id)
       return findCustomer

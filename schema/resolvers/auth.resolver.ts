@@ -1,21 +1,19 @@
 import { SignOptions, sign } from 'jsonwebtoken'
 import verifyUser from '../../utilities/verifyUser';
-import { FormError, User, ValidateSchema } from '../../typeDefs';
+import { FormError, User, UserRole, ValidateSchema } from '../../typeDefs';
 import validateForm from '../../utilities/validateForm';
 import Customer from '../../dataLayer/schema/Customer';
 import bcrypt from 'bcrypt'
 const authResolver = {
   Mutation: {
     logInAdmin: async (parent: any, args: any, context: any) => {
-console.log('asdf');
 
       const { email, password } = args.input
 
       if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-        const payload = {
-          admin: {
-            id: process.env.ADMIN_ID
-          }
+        const payload:UserRole = {
+            userRole: User.ADMIN,
+            id: process.env.ADMIN_ID as string
         }
 
         const signOptions: SignOptions = {
@@ -59,14 +57,13 @@ console.log('asdf');
 
       const isMatched = bcrypt.compareSync(password, user.password)
 
-      if(!isMatched) {
+      if (!isMatched) {
         throw new Error('Bad Credentials')
       }
 
-      const payload = {
-        customer: {
-          id: user.id
-        }
+      const payload:UserRole = {
+        userRole: User.CUSTOMER,
+        id: user.id
       }
 
       const signOptions: SignOptions = {
@@ -84,9 +81,6 @@ console.log('asdf');
       return {
         token
       }
-      // else {
-      //   throw new Error('Bad Credentials')
-      // }
 
     },
 
@@ -94,18 +88,15 @@ console.log('asdf');
   Query: {
     getAuthStatus: (parent: any, args: any, context: any) => {
 
-
       if (!context.token) {
         return { isLoggedIn: false }
       }
-
-      const { user } = verifyUser(context.token)
-
+      const user = verifyUser(context.token)
       if (!user) {
         return { isLoggedIn: false, userRole: null }
       }
 
-      return { isLoggedIn: true, userRole: user }
+      return { isLoggedIn: true, userRole: JSON.stringify(user) }
     }
   },
 };

@@ -1,17 +1,18 @@
-import { Admin, CustomJwtPayload, Customer, User } from "../typeDefs"
+import { Admin, Customer, CustomJwtPayload, User, UserRole } from "../typeDefs"
 import { verify } from "jsonwebtoken"
 
 const verifyUser = (token: string) => {
-    const userVerified = verify(token, process.env.JWTSECRET as string) as CustomJwtPayload
+    const verifiedUser:CustomJwtPayload = verify(token, process.env.JWTSECRET as string) as CustomJwtPayload
+    
 
-    if (userVerified) {
-        if (userVerified.admin) {
-            return { user: User.ADMIN }
+    if (verifiedUser) {
+        const userRole:UserRole = {
+            userRole: verifiedUser.userRole,
+            id:verifiedUser.id
         }
-        return { user: userVerified.customer?.id }
-        // return user.customer as Omit<Customer, 'password'>
+       return userRole
     }
-    return { user: null }
+    return null
 }
 
 export default verifyUser

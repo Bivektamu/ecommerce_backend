@@ -22,16 +22,25 @@ export type Admin = {
     password: String
 }
 
+export interface UserRole {
+    userRole: User,
+    id:string
+
+}
+
+export interface CustomJwtPayload extends JwtPayload {
+    userRole:User,
+    id:string,
+    iat: number,
+    exp:number
+}
 
 export interface MyContext {
     customer?: Omit<Customer, 'password'>
     admin?: Omit<Admin, 'password'>
 }
 
-export interface CustomJwtPayload extends JwtPayload {
-    admin?: Omit<Admin, 'password'>
-    customer?: Omit<Customer, 'password'>
-}
+
 
 export interface inputProductImg {
     _id:string,

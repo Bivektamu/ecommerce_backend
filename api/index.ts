@@ -13,7 +13,7 @@ import resolvers from '../schema/resolvers/index.resolver';
 import connectDB from '../dataLayer';
 import typeDefs from '../schema/typeDefs/index.typeDef'
 import verifyUser from '../utilities/verifyUser';
-import { CustomJwtPayload, MyContext } from '../typeDefs';
+import {MyContext } from '../typeDefs';
 
 
 const app = express();
@@ -43,11 +43,13 @@ async function startServer() {
     cors<cors.CorsRequest>(),
     express.json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({ token:req.headers.token }),
+      context: async ({ req }) => ({ 
+        token: req.headers.token,
+       }),
     }));
 
     await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));
-    console.log(`🚀 Server ready`);
+    console.log(`🚀 Server ready in port 3000. Graphql testing link in http://localhost:3000/graphql`);
 
   // const { url } = await startStandaloneServer(server, {
   //   listen: { port: 3000 },

@@ -21,6 +21,8 @@ const productResolver = {
       // }
       const products = await Product.find()
       return products
+      
+      // return products.map(({__typename, ...rest})=>rest)
     },
     product: async (parent: any, args: any, context: any) => {
       const admin = context.admin

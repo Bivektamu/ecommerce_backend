@@ -96,6 +96,7 @@ const authResolver = {
         return { isLoggedIn: false, userRole: null }
       }
 
+
       return { isLoggedIn: true, userRole: JSON.stringify(user) }
     }
   },

@@ -42,7 +42,7 @@ async function startServer() {
   app.use('/graphql',
     cors<cors.CorsRequest>(
       {
-        origin:['http://localhost:5173', 'https://mobjecommerce.netlify.app/']
+        origin:['http://localhost:5173', 'https://mobjecommerce.netlify.app']
       }
     ),
     express.json(),

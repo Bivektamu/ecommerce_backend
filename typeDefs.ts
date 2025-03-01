@@ -1,5 +1,5 @@
 import { JwtPayload} from "jsonwebtoken"
-import { ObjectId } from "mongoose"
+import mongoose, { ObjectId } from "mongoose"
 
 export type Customer = {
     id: String
@@ -62,4 +62,12 @@ export interface ValidateSchema<T> {
     type: string,
     value: T,
     msg?:string
+}
+
+export interface ReviewType {
+    id: String,
+    customerId: mongoose.Types.ObjectId,
+    productId: mongoose.Types.ObjectId,
+    stars: Number,
+    review: String
 }

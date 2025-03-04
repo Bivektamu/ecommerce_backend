@@ -1,10 +1,8 @@
+import { timeStamp } from "console";
 import mongoose, { Schema } from "mongoose";
 
 const ReviewSchema = new Schema({
-    id: {
-        type: String,
-        required: true,
-    },
+    
     customerId: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -15,13 +13,17 @@ const ReviewSchema = new Schema({
         required: true,
         ref: 'Product'
     },
-    stars: {
+    rating: {
         type:Number,
         required: true
     },
     review: {
         type: String,
         required: true
+    },
+    timeStamp: {
+        type: Date,
+        default: Date.now
     }
 
 })

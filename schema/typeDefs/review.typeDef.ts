@@ -1,11 +1,15 @@
 import gql from "graphql-tag"
+
 const reviewTypeDef = gql`
+
+    scalar Date
     type Review {
         id: ID!,
         customerId: ID!,
         productId: ID!,
-        stars: Int!,
-        review: String!
+        rating: Int!,
+        review: String!,
+        timeStamp: Date!
     }
     
     type Query {
@@ -13,10 +17,9 @@ const reviewTypeDef = gql`
     }
 
     input CreateReview {
-        id: ID!,
         customerId: ID!,
         productId: ID!,
-        stars: Int!,
+        rating: Int!,
         review: String!
     }
     type Mutation {

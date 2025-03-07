@@ -29,7 +29,6 @@ const reviewResolver = {
         reviewsByProductId: async (parent: any, args: any) => {
             const productId = args.id
             const reviews = await Review.find({ productId })
-            
             return reviews
         }
     },

@@ -19,6 +19,7 @@ const customerTypeDef = gql`
     type Query {
         customers: [Customer],
         customer(id:ID): Customer,
+        customerEmail(id:ID): String
     }
 
     type Mutation {

@@ -28,6 +28,14 @@ const customerRresolver = {
       const id = args.id
       const findCustomer = await Customer.findById(id)
       return findCustomer
+    },
+    customerEmail: async (parent: any, args: any) => {
+      const id = args.id
+      const findCustomer = await Customer.findById(id)
+      if (!findCustomer) {
+        throw new Error('Customer email not found')
+      }
+      return findCustomer.email
     }
   },
   Mutation: {

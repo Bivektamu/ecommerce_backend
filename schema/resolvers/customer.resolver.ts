@@ -36,6 +36,16 @@ const customerRresolver = {
         throw new Error('Customer email not found')
       }
       return findCustomer.email
+    },
+    customerName: async (parent: any, args: any) => {
+      const id = args.id
+      const findCustomer = await Customer.findById(id)
+      if (!findCustomer) {
+        throw new Error('Customer email not found')
+      }
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      return { firstName: findCustomer.firstName, lastName: findCustomer.lastName }
     }
   },
   Mutation: {

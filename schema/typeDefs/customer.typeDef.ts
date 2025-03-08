@@ -16,10 +16,16 @@ const customerTypeDef = gql`
         password: String!
     }
 
+    type CustomerName {
+        firstName: String,
+        lastName: String,
+    }
+
     type Query {
         customers: [Customer],
         customer(id:ID): Customer,
         customerEmail(id:ID): String
+        customerName(id:ID): CustomerName
     }
 
     type Mutation {

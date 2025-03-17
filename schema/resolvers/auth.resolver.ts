@@ -12,7 +12,7 @@ const authResolver = {
 
       if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
         const payload:UserRole = {
-            userRole: User.ADMIN,
+            role: User.ADMIN,
             id: process.env.ADMIN_ID as string
         }
 
@@ -62,7 +62,7 @@ const authResolver = {
       }
 
       const payload:UserRole = {
-        userRole: User.CUSTOMER,
+        role: User.CUSTOMER,
         id: user.id
       }
 
@@ -93,11 +93,11 @@ const authResolver = {
       }
       const user = verifyUser(context.token)
       if (!user) {
-        return { isLoggedIn: false, userRole: null }
+        return { isLoggedIn: false, role: null }
       }
 
 
-      return { isLoggedIn: true, userRole: JSON.stringify(user) }
+      return { isLoggedIn: true, role: JSON.stringify(user) }
     }
   },
 };

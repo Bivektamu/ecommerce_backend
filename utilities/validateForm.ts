@@ -7,32 +7,38 @@ const validateForm = (validateSchema: ValidateSchema<any>[]) => {
 
     let errors: FormError = {}
     validateSchema.map(schema => {
-        const { name, type, value, msg } = schema
+        const { name, type, value, msg, required } = schema
 
         if (value === '' || value === null) {
-            let error = {
-                [name]: msg || `Please insert ${name}.`
-            }
-            if (type === 'boolean') {
-                error = {
-                    [name]: msg || `Please select ${name}.`
+
+            if (required !== false) {
+                let error = {
+                    [name]: msg || `Please insert ${name}.`
                 }
+                if (type === 'boolean') {
+                    error = {
+                        [name]: msg || `Please select ${name}.`
+                    }
+                }
+                errors = { ...errors, ...error }
             }
-            errors = { ...errors, ...error }
         }
         else if (Array.isArray(value) && value.length < 1) {
-            let error = {}
-            if (type === 'file') {
-                error = {
-                    [name]: msg || `Please upload ${name}.`
+
+            if (required !== false) {
+                let error = {}
+                if (type === 'file') {
+                    error = {
+                        [name]: msg || `Please upload ${name}.`
+                    }
                 }
-            }
-            else if (type === 'checkbox') {
-                error = {
-                    [name]: msg || `Please choose ${name}.`
+                else if (type === 'checkbox') {
+                    error = {
+                        [name]: msg || `Please choose ${name}.`
+                    }
                 }
+                errors = { ...errors, ...error }
             }
-            errors = { ...errors, ...error }
         }
 
         else {
@@ -72,11 +78,13 @@ const validateForm = (validateSchema: ValidateSchema<any>[]) => {
                 }
                 case 'number':
                     if (value <= 0) {
-                        const error = {
-                            [name]: msg || `Please insert valid ${name}.`
+                        if (required !== false) {
+                            
+                            const error = {
+                                [name]: msg || `Please insert valid ${name}.`
+                            }
+                            errors = { ...errors, ...error }
                         }
-                        errors = { ...errors, ...error }
-
                     }
 
                     break;

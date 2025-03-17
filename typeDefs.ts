@@ -1,6 +1,15 @@
 import { JwtPayload} from "jsonwebtoken"
 import mongoose, { ObjectId } from "mongoose"
 
+
+export type Address  = {
+    street: String,
+    city: String,
+    state: String,
+    zipcode?: Number,
+    country: String,
+}
+
 export type Customer = {
     id: String
     firstName: String,
@@ -23,13 +32,13 @@ export type Admin = {
 }
 
 export interface UserRole {
-    userRole: User,
+    role: User,
     id:string
 
 }
 
 export interface CustomJwtPayload extends JwtPayload {
-    userRole:User,
+    role:User,
     id:string,
     iat: number,
     exp:number
@@ -61,7 +70,8 @@ export interface ValidateSchema<T> {
     name: string,
     type: string,
     value: T,
-    msg?:string
+    msg?:string,
+    required?:boolean
 }
 
 export interface ReviewType {

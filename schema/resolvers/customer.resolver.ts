@@ -1,5 +1,5 @@
 import Customer from "../../dataLayer/schema/Customer";
-import { FormError, User, ValidateSchema } from "../../typeDefs";
+import { Address, FormError, User, ValidateSchema } from "../../typeDefs";
 import validateForm from "../../utilities/validateForm";
 import bcrypt from 'bcrypt'
 import verifyUser from "../../utilities/verifyUser";
@@ -11,7 +11,7 @@ const customerRresolver = {
         throw new Error('Not Authenticated')
       }
       const user = verifyUser(context.token)
-      if (user?.userRole !== User.ADMIN) {
+      if (user?.role !== User.ADMIN) {
         throw new Error('Not Authenticated')
       }
       const customers = await Customer.find()
@@ -43,8 +43,6 @@ const customerRresolver = {
       if (!findCustomer) {
         throw new Error('Customer email not found')
       }
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
       return { firstName: findCustomer.firstName, lastName: findCustomer.lastName }
     }
   },
@@ -67,8 +65,6 @@ const customerRresolver = {
       if (customerExists) {
         throw new Error('User already exists')
       }
-
-
 
       const customer = new Customer({
         firstName,
@@ -103,6 +99,61 @@ const customerRresolver = {
           }
         }
       }
+    },
+
+    updateAddress: async (parent: any, args: any, context: any) => {
+      if (!context.token) {
+        throw new Error('Not Authenticated')
+      }
+
+      
+      const user = verifyUser(context.token)
+      if (!user || user.role !== User.CUSTOMER) {
+        throw new Error('Not Authenticated')
+      }
+
+      const { street, city, state, zipcode, country } = args.input
+
+      const validateSchema: ValidateSchema<any>[] = [
+        { value: street, name: 'street', type: 'string' },
+        { value: city, name: 'city', type: 'string' },
+        { value: state, name: 'state', type: 'string' },
+        { value: zipcode, name: 'zipcode', type: 'number', required: false },
+        { value: country, name: 'country', type: 'string' },
+      ]
+
+      const errors: FormError = validateForm(validateSchema)
+
+      if (Object.keys(errors).length > 0) {
+        throw new Error(JSON.stringify(errors))
+      }
+      const findCustomer = await Customer.findById(user.id)
+      if (!findCustomer) {
+        throw new Error('Customer not found')
+      }
+      const address: Address = {
+        street, city, state, country
+      }
+      if (zipcode > 0) {
+        address.zipcode = zipcode
+      }
+
+      try {
+
+        const updatedAddress = await Customer.findByIdAndUpdate(user.id, {
+          address
+        })
+
+        console.log(updatedAddress);
+        return {
+          success: true
+        }
+
+      } catch (error) {
+        if (error instanceof Error)
+          throw new Error(error.message)
+      }
+
     }
 
   }

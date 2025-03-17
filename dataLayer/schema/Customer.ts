@@ -13,12 +13,29 @@ const CustomerSchema = new Schema({
         type: String,
         required: true,
     },
-    
+
     password: {
         type: String,
         required: true,
     },
-    
+    address: {
+        street: {
+            type: String,
+        },
+        city: {
+            type: String,
+        },
+        state: {
+            type: String,
+        },
+        zipcode: {
+            type: String,
+        },
+        country: {
+            type: String,
+        },
+    }
+
 })
 
 const Customer = mongoose.model('Customer', CustomerSchema)

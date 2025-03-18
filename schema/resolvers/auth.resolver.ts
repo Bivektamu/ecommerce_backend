@@ -93,11 +93,11 @@ const authResolver = {
       }
       const user = verifyUser(context.token)
       if (!user) {
-        return { isLoggedIn: false, role: null }
+        return { isLoggedIn: false, user: null }
       }
 
 
-      return { isLoggedIn: true, role: JSON.stringify(user) }
+      return { isLoggedIn: true, user:user }
     }
   },
 };

@@ -12,10 +12,15 @@ const globalTypeDef = gql`
       email:String!,
       password: String!
     }
+
+    type User {
+      role: String!,
+      id: ID!
+    }
     
     type getAuthStatusPayload {
       isLoggedIn: Boolean!,
-      userRole: String
+      user:User
     }
     
   type Query {

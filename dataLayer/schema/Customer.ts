@@ -18,6 +18,10 @@ const CustomerSchema = new Schema({
         type: String,
         required: true,
     },
+    registeredDate: {
+        type: Date,
+        default: Date.now
+    },
     address: {
         street: {
             type: String,

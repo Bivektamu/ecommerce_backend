@@ -102,23 +102,24 @@ const customerRresolver = {
     },
 
     updateAddress: async (parent: any, args: any, context: any) => {
+
+      
       if (!context.token) {
         throw new Error('Not Authenticated')
       }
 
-      
       const user = verifyUser(context.token)
       if (!user || user.role !== User.CUSTOMER) {
         throw new Error('Not Authenticated')
       }
 
-      const { street, city, state, zipcode, country } = args.input
+      const { street, city, state, postcode, country } = args.input
 
       const validateSchema: ValidateSchema<any>[] = [
         { value: street, name: 'street', type: 'string' },
         { value: city, name: 'city', type: 'string' },
         { value: state, name: 'state', type: 'string' },
-        { value: zipcode, name: 'zipcode', type: 'number', required: false },
+        { value: postcode, name: 'postcode', type: 'string', required: false },
         { value: country, name: 'country', type: 'string' },
       ]
 
@@ -132,10 +133,7 @@ const customerRresolver = {
         throw new Error('Customer not found')
       }
       const address: Address = {
-        street, city, state, country
-      }
-      if (zipcode > 0) {
-        address.zipcode = zipcode
+        street, city, state, country, postcode
       }
 
       try {
@@ -145,9 +143,8 @@ const customerRresolver = {
         })
 
         console.log(updatedAddress);
-        return {
-          success: true
-        }
+        
+        return address
 
       } catch (error) {
         if (error instanceof Error)

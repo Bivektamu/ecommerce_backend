@@ -1,9 +1,10 @@
-import gql from "graphql-tag"
-
-const globalTypeDef = gql`
-    scalar Date
-    scalar Upload
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const graphql_tag_1 = __importDefault(require("graphql-tag"));
+const globalTypeDef = (0, graphql_tag_1.default) `
     type ReturnType {
         success: Boolean!
         message: String
@@ -29,6 +30,5 @@ const globalTypeDef = gql`
   type Query {
     getAuthStatus: getAuthStatusPayload
   }
-  `
-
-export default globalTypeDef
+  `;
+exports.default = globalTypeDef;

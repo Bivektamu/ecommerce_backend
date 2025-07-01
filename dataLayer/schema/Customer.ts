@@ -32,7 +32,7 @@ const CustomerSchema = new Schema({
         state: {
             type: String,
         },
-        zipcode: {
+        postcode: {
             type: String,
         },
         country: {

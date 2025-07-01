@@ -1,25 +1,17 @@
-import gql from "graphql-tag";
-
-const customerTypeDef = gql`
-
- type Address {
-        street: String,
-        city: String,
-        postcode: String,
-        state: String,
-        country: String,
-    }
-
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const graphql_tag_1 = __importDefault(require("graphql-tag"));
+const customerTypeDef = (0, graphql_tag_1.default) `
     type Customer {
-        id: ID!,
-        firstName: String!,
-        lastName: String!,
-        email:String!,
-        address: Address
+        id: ID,
+        firstName: String,
+        lastName: String,
+        email:String,
+        password: String
     }
-
-   
 
     input CustomerInput {
         firstName: String!,
@@ -31,8 +23,7 @@ const customerTypeDef = gql`
     input AddressInput {
         street: String!,
         city: String!,
-        postcode: String!,
-        state: String!,
+        zipcode: Int,
         country: String!,
     }
 
@@ -51,8 +42,7 @@ const customerTypeDef = gql`
     type Mutation {
         createCustomer(input:CustomerInput): Customer,
         deleteCustomer(id: ID): ReturnType,
-        updateAddress(input: AddressInput): Address
+        updateAddress(input: AddressInput): ReturnType
     }
-`
-
-export default customerTypeDef
+`;
+exports.default = customerTypeDef;

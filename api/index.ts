@@ -1,5 +1,4 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import express from 'express'
@@ -12,7 +11,6 @@ import resolvers from '../schema/resolvers/index.resolver';
 
 import connectDB from '../dataLayer';
 import typeDefs from '../schema/typeDefs/index.typeDef'
-import verifyUser from '../utilities/verifyUser';
 import {MyContext } from '../typeDefs';
 
 
@@ -54,25 +52,6 @@ async function startServer() {
 
     await new Promise<void>((resolve) => httpServer.listen({ port: 3000 }, resolve));
     console.log(`🚀 Server ready in port 3000. Graphql testing link in http://localhost:3000/graphql`);
-
-  // const { url } = await startStandaloneServer(server, {
-  //   listen: { port: 3000 },
-  //   context: async ({ req, res }) => {
-
-  //     const token = req.headers.token || ''
-
-  //     if (token) {
-  //       const user: CustomJwtPayload | null = verifyUser(token as string)
-
-  //       if (user && user.admin) {
-  //         return { admin: user.admin }
-  //       }
-  //     }
-  //     return {}
-  //   },
-  // });
-
-  // console.log(`🚀  Server ready at: ${url}`);
 
 }
 

@@ -21,7 +21,7 @@ const productResolver = {
       // }
       const products = await Product.find()
       return products
-      
+
       // return products.map(({__typename, ...rest})=>rest)
     },
     product: async (parent: any, args: any, context: any) => {
@@ -74,7 +74,6 @@ const productResolver = {
         return await newProduct.save()
       } catch (error) {
         if (error) {
-          console.log(error);
 
           throw error
         }
@@ -138,7 +137,6 @@ const productResolver = {
         }
       } catch (error) {
         if (error) {
-          console.log(error);
           throw error
 
         }

@@ -6,7 +6,7 @@ export type Address  = {
     street: String,
     city: String,
     state: String,
-    zipcode?: Number,
+    postcode: String,
     country: String,
 }
 

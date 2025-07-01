@@ -1,7 +1,12 @@
-import gql from "graphql-tag"
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const graphql_tag_1 = __importDefault(require("graphql-tag"));
+const reviewTypeDef = (0, graphql_tag_1.default) `
 
-const reviewTypeDef = gql`
-
+    scalar Date
     type Review {
         id: ID!,
         customerId: ID!,
@@ -24,6 +29,5 @@ const reviewTypeDef = gql`
     type Mutation {
         createReview(input:CreateReview):Review
     }
-`
-
-export default reviewTypeDef
+`;
+exports.default = reviewTypeDef;

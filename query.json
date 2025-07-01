@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /graphql",
+  "rawPath": "/graphql",
+  "headers": {
+    "content-type": "application/json",
+    "token": "abc123"
+  },
+  "requestContext": {
+    "http": {
+      "method": "POST",
+      "path": "/graphql"
+    }
+  },
+  "body": "{\"query\":\"query { getAllProducts { name price } }\"}",
+  "isBase64Encoded": false
+}

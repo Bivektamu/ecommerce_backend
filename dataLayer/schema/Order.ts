@@ -1,14 +1,28 @@
 import mongoose, { Schema } from "mongoose";
 
 const OrderSchema = new Schema({
+    orderNumber: {
+        type: String,
+        required: true,
+    },
     userId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'Customer'
     },
     status: {
-        type: [String],
+        type: String,
         enum: ['PENDING', 'COMPLETED', 'PROCESSING', 'CANCELLED', 'FAILED', 'SHIPPED', 'REFUNDED'],
+        required: true,
+    },
+    
+    subTotal: {
+        type: Number,
+        required: true,
+    },
+    
+    tax: {
+        type: Number,
         required: true,
     },
     total: {
@@ -23,16 +37,16 @@ const OrderSchema = new Schema({
             ref: 'Product'
         },
         color: {
-            type: [String],
+            type: String,
             enum: ['BLACK', 'RED', 'GRAY', 'WHITE', 'AMBER'],
             required: true
         },
-        quantiy: {
+        quantity: {
             type: Number,
             required: true,
         },
         size: {
-            type: [String],
+            type: String,
             enum: ['S', 'M', 'L', 'XL'],
             required: true
         },
@@ -63,7 +77,7 @@ const OrderSchema = new Schema({
             type: String,
         },
     },
-    orederedAt: {
+    orderPlaced: {
         type: Date,
         default: Date.now
     },

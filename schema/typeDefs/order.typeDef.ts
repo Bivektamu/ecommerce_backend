@@ -30,19 +30,23 @@ enum Status {
     }
     type Order {
         id: ID!,
+        orderNumber: Int!,
         userId: ID!,
         status:Status!,
-        total: Int!,
+        total: Float!,
+        subTotal: Float!,
+        tax: Float!,
         items: [OrderItem!]!,
         shippingAddress: Address!
     }
 
     
     input OrderInput {
-        id: ID!,
         userId: ID!,
         status:Status!,
-        total: Int!,
+        total: Float!,
+        subTotal: Float!,
+        tax: Float!,
         items: [OrderItemInput!]!,
         shippingAddress: AddressInput!
     }

@@ -1,5 +1,5 @@
-import Customer from "../../dataLayer/schema/Customer";
-import { Address, FormError, User, ValidateSchema } from "../../typeDefs";
+import Customer from "../../dataLayer/schema/User";
+import { Address, FormError, UserRole, ValidateSchema } from "../../typeDefs";
 import validateForm from "../../utilities/validateForm";
 import bcrypt from 'bcrypt'
 import verifyUser from "../../utilities/verifyUser";
@@ -11,7 +11,7 @@ const customerRresolver = {
         throw new Error('Not Authenticated')
       }
       const user = verifyUser(context.token)
-      if (user?.role !== User.ADMIN) {
+      if (user?.role !== UserRole.ADMIN) {
         throw new Error('Not Authenticated')
       }
       const customers = await Customer.find()
@@ -109,7 +109,7 @@ const customerRresolver = {
       }
 
       const user = verifyUser(context.token)
-      if (!user || user.role !== User.CUSTOMER) {
+      if (!user || user.role !== UserRole.CUSTOMER) {
         throw new Error('Not Authenticated')
       }
 

@@ -1,8 +1,8 @@
 import { SignOptions, sign } from 'jsonwebtoken'
 import verifyUser from '../../utilities/verifyUser';
-import { FormError, User, UserRole, ValidateSchema } from '../../typeDefs';
+import { CustomJwtPayload, FormError, User, UserRole, ValidateSchema } from '../../typeDefs';
 import validateForm from '../../utilities/validateForm';
-import Customer from '../../dataLayer/schema/Customer';
+import Customer from '../../dataLayer/schema/User';
 import bcrypt from 'bcrypt'
 const authResolver = {
   Mutation: {
@@ -11,8 +11,8 @@ const authResolver = {
       const { email, password } = args.input
 
       if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-        const payload:UserRole = {
-            role: User.ADMIN,
+        const payload:CustomJwtPayload = {
+            role: UserRole.ADMIN,
             id: process.env.ADMIN_ID as string
         }
 
@@ -61,8 +61,8 @@ const authResolver = {
         throw new Error('Bad Credentials')
       }
 
-      const payload:UserRole = {
-        role: User.CUSTOMER,
+      const payload:CustomJwtPayload = {
+        role: UserRole.CUSTOMER,
         id: user.id
       }
 

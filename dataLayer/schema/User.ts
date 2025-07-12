@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const CustomerSchema = new Schema({
+const UserSchema = new Schema({
     firstName: {
         type: String,
         required: true,
@@ -17,6 +17,12 @@ const CustomerSchema = new Schema({
     password: {
         type: String,
         required: true,
+    },
+    role: {
+        type: String,
+        required: true,
+        enum:['admin', 'customer']
+
     },
     registeredDate: {
         type: Date,
@@ -42,5 +48,5 @@ const CustomerSchema = new Schema({
 
 })
 
-const Customer = mongoose.model('Customer', CustomerSchema)
-export default Customer
+const User = mongoose.model('User', UserSchema)
+export default User

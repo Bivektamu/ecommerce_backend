@@ -19,8 +19,6 @@ const customerTypeDef = gql`
         address: Address
     }
 
-   
-
     input CustomerInput {
         firstName: String!,
         lastName: String!,

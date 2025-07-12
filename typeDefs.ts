@@ -10,45 +10,35 @@ export type Address  = {
     country: String,
 }
 
-export type Customer = {
+export enum UserRole {
+    ADMIN = 'admin',
+    CUSTOMER = 'customer',
+}
+
+export type User = {
     id: String
     firstName: String,
     lastName: String,
     email: String,
-    password: String
-}
-
-export enum User {
-    ADMIN = 'ADMIN',
-    CUSTOMER = 'CUSTOMER',
-}
-
-export type Admin = {
-    id: String
-    firstName: String,
-    lastName: String,
-    email: String,
-    password: String
-}
-
-export interface UserRole {
-    role: User,
-    id:string
-
+    password: String,
+    role: UserRole
 }
 
 export interface CustomJwtPayload extends JwtPayload {
-    role:User,
+    role:UserRole,
     id:string,
-    iat: number,
-    exp:number
+    iat?: number,
+    exp?:number
+}
+
+export interface verifiedUser {
+    role: UserRole,
+    id: string
 }
 
 export interface MyContext {
-    customer?: Omit<Customer, 'password'>
-    admin?: Omit<Admin, 'password'>
+    token?: String
 }
-
 
 
 export interface inputProductImg {

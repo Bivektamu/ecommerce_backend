@@ -1,5 +1,6 @@
+import Customer from "../../dataLayer/schema/User"
 import Order from "../../dataLayer/schema/Order"
-import { User } from "../../typeDefs"
+import { User, UserRole } from "../../typeDefs"
 import verifyUser from "../../utilities/verifyUser"
 
 
@@ -7,6 +8,27 @@ const orderResolver = {
     Query: {
         orders: async (parent: any, args: any, context: any) => {
             return 'Order Sample'
+        },
+        customerOrders: async (parent: any, args: any, context: any) => {
+            if (!context.token) {
+                throw new Error('Not Authenticated')
+            }
+
+            const user = verifyUser(context.token)
+
+            if (!user) {
+                throw new Error('Not Authenticated')
+            }
+            const id = args.id
+            const findCustomer = await Customer.findById(id)
+            if (!findCustomer) {
+                throw new Error('User not found')
+            }
+
+            const orders = await Order.find({userId: id})
+
+            console.log(orders)
+            return orders
         },
     },
     Mutation: {
@@ -20,7 +42,7 @@ const orderResolver = {
                 throw new Error('Not Authenticated')
             }
 
-            if (user.role !== User.CUSTOMER) {
+            if (user.role !== UserRole.CUSTOMER) {
                 throw new Error('Not Authenticated')
             }
 

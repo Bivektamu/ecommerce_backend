@@ -30,8 +30,8 @@ enum Status {
     }
     type Order {
         id: ID!,
-        orderNumber: Int!,
-        userId: ID!,
+        orderNumber: String!,
+        customerId: ID!,
         status:Status!,
         total: Float!,
         subTotal: Float!,
@@ -42,7 +42,7 @@ enum Status {
 
     
     input OrderInput {
-        userId: ID!,
+        customerId: ID!,
         status:Status!,
         total: Float!,
         subTotal: Float!,
@@ -53,6 +53,7 @@ enum Status {
 
     type Query {
         orders: String
+        customerOrders(id:ID): [Order]
     }
     type Mutation {
         createOrder(input: OrderInput): String

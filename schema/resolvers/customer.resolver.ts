@@ -70,7 +70,8 @@ const customerRresolver = {
         firstName,
         lastName,
         email: email.toLowerCase(),
-        password
+        password,
+        role: UserRole.CUSTOMER
       })
 
       const salt = bcrypt.genSaltSync(8)

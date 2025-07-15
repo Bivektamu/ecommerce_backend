@@ -71,3 +71,8 @@ export interface ReviewType {
     stars: Number,
     review: String
 }
+
+export enum ErrorCode {
+    USER_NOT_FOUND = 'USER_NOT_FOUND',
+    BAD_CREDENTIALS = 'BAD_CREDENTIALS'
+} 

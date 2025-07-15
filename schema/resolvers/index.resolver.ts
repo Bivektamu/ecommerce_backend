@@ -29,22 +29,7 @@ const globalResolver = {
 
       
     // },
-    Query: {
-        getAuthStatus: (parent: any, args: any, context: any) => {
-
-            if (!context.token) {
-                return { isLoggedIn: false }
-            }
-
-            const admin = verifyUser(context.token)
-
-            if (!admin) {
-                return { isLoggedIn: false }
-            }
-
-            return { isLoggedIn: true }
-        }
-    },
+   
 }
 
 export default [globalResolver, customerRresolver, adminRresolver, productResolver, orderResolver]

@@ -21,14 +21,7 @@ const globalTypeDef = gql`
       id: ID!
     }
     
-    type getAuthStatusPayload {
-      isLoggedIn: Boolean!,
-      user:User
-    }
-    
-  type Query {
-    getAuthStatus: getAuthStatusPayload
-  }
+ 
   `
 
 export default globalTypeDef

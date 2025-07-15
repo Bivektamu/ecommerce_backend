@@ -11,12 +11,19 @@ const customerTypeDef = gql`
     }
 
 
+    enum UserRole {
+        admin,
+        customer
+    }
+
+
     type Customer {
         id: ID!,
         firstName: String!,
         lastName: String!,
         email:String!,
-        address: Address
+        address: Address,
+        role: UserRole
     }
 
     input CustomerInput {

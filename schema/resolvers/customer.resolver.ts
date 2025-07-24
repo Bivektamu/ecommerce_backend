@@ -1,8 +1,9 @@
-import Customer from "../../dataLayer/schema/User";
-import { Address, FormError, UserRole, ValidateSchema } from "../../typeDefs";
+import User from "../../dataLayer/schema/User";
+import { Address, ErrorCode, FormError, UserRole, ValidateSchema } from "../../typeDefs";
 import validateForm from "../../utilities/validateForm";
 import bcrypt from 'bcrypt'
 import verifyUser from "../../utilities/verifyUser";
+import { GraphQLError } from "graphql";
 
 const customerRresolver = {
   Query: {
@@ -14,7 +15,7 @@ const customerRresolver = {
       if (user?.role !== UserRole.ADMIN) {
         throw new Error('Not Authenticated')
       }
-      const customers = await Customer.find()
+      const customers = await User.find()
       return customers
     },
     customer: async (parent: any, args: any, context: any) => {
@@ -26,12 +27,12 @@ const customerRresolver = {
         throw new Error('Not Authenticated')
       }
       const id = args.id
-      const findCustomer = await Customer.findById(id)
+      const findCustomer = await User.findById(id)
       return findCustomer
     },
     customerEmail: async (parent: any, args: any) => {
       const id = args.id
-      const findCustomer = await Customer.findById(id)
+      const findCustomer = await User.findById(id)
       if (!findCustomer) {
         throw new Error('Customer email not found')
       }
@@ -39,7 +40,7 @@ const customerRresolver = {
     },
     customerName: async (parent: any, args: any) => {
       const id = args.id
-      const findCustomer = await Customer.findById(id)
+      const findCustomer = await User.findById(id)
       if (!findCustomer) {
         throw new Error('Customer email not found')
       }
@@ -61,12 +62,12 @@ const customerRresolver = {
         throw new Error(JSON.stringify(errors))
       }
 
-      const customerExists = await Customer.findOne({ email: email.toLowerCase() })
+      const customerExists = await User.findOne({ email: email.toLowerCase() })
       if (customerExists) {
         throw new Error('User already exists')
       }
 
-      const customer = new Customer({
+      const user = new User({
         firstName,
         lastName,
         email: email.toLowerCase(),
@@ -76,15 +77,15 @@ const customerRresolver = {
 
       const salt = bcrypt.genSaltSync(8)
 
-      customer.password = bcrypt.hashSync(password, salt)
+      user.password = bcrypt.hashSync(password, salt)
 
-      return await customer.save()
+      return await user.save()
     },
     deleteCustomer: async (parent: any, args: any) => {
       const { id } = args
 
       try {
-        const deletedUser = await Customer.findByIdAndDelete(id)
+        const deletedUser = await User.findByIdAndDelete(id)
         if (deletedUser) {
           return {
             success: true,
@@ -104,7 +105,7 @@ const customerRresolver = {
 
     updateAddress: async (parent: any, args: any, context: any) => {
 
-      
+
       if (!context.token) {
         throw new Error('Not Authenticated')
       }
@@ -129,7 +130,7 @@ const customerRresolver = {
       if (Object.keys(errors).length > 0) {
         throw new Error(JSON.stringify(errors))
       }
-      const findCustomer = await Customer.findById(user.id)
+      const findCustomer = await User.findById(user.id)
       if (!findCustomer) {
         throw new Error('Customer not found')
       }
@@ -139,13 +140,28 @@ const customerRresolver = {
 
       try {
 
-        const updatedAddress = await Customer.findByIdAndUpdate(user.id, {
-          address
-        })
+        const updateStatus = await User.updateOne(
+          { _id: user.id },
+          {
+            $set: {
+              address
+            }
 
-        console.log(updatedAddress);
-        
-        return address
+          }
+        )
+
+        const { acknowledged, modifiedCount } = updateStatus
+        if (acknowledged && modifiedCount === 1) {
+          return address
+        }
+        else throw new GraphQLError('Sorry address could not updated. Please try later',
+          {
+            extensions: {
+              code : ErrorCode.SHIPPING_ADDRESS_ERROR
+            }
+          }
+        )
+
 
       } catch (error) {
         if (error instanceof Error)

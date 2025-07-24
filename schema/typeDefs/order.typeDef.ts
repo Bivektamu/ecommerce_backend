@@ -38,6 +38,7 @@ enum Status {
         tax: Float!,
         items: [OrderItem!]!,
         shippingAddress: Address!
+        orderPlaced: Date!
     }
 
     
@@ -52,8 +53,9 @@ enum Status {
     }
 
     type Query {
-        orders: String
+        orders: [Order]
         customerOrders(id:ID): [Order]
+        orderByNumber(orderNumber:String): Order
     }
     type Mutation {
         createOrder(input: OrderInput): String

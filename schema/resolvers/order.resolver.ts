@@ -29,7 +29,7 @@ const orderResolver = {
 
             try {
                 if (!context.token) {
-                    throw new Error('Not Authenticated')
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
                 }
 
                 const user = verifyUser(context.token)
@@ -79,12 +79,12 @@ const orderResolver = {
                 }
 
                 const orderNumber = args.orderNumber
-                if(!orderNumber) {
+                if (!orderNumber) {
                     throw new Error(ErrorCode.INPUT_ERROR)
                 }
 
                 const order = await Order.find({ orderNumber })
-                if(order.length < 1) {
+                if (order.length < 1) {
                     throw new Error(ErrorCode.NOT_FOUND)
                 }
                 return order[0]
@@ -100,16 +100,16 @@ const orderResolver = {
     Mutation: {
         createOrder: async (parent: any, args: any, context: any) => {
             if (!context.token) {
-                throw new Error('Not Authenticated')
+                throw new Error(ErrorCode.NOT_AUTHENTICATED)
             }
 
             const user = verifyUser(context.token)
             if (!user) {
-                throw new Error('Not Authenticated')
+                throw new Error(ErrorCode.NOT_AUTHENTICATED)
             }
 
             if (user.role !== UserRole.CUSTOMER) {
-                throw new Error('Not Authenticated')
+                throw new Error(ErrorCode.NOT_AUTHENTICATED)
             }
 
             try {
@@ -138,7 +138,9 @@ const orderResolver = {
                 return newOrder.orderNumber
 
             } catch (error) {
-                throw error
+                if (error instanceof Error) {
+                    throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+                }
 
             }
 

@@ -4,23 +4,31 @@ import gql from "graphql-tag";
 const wishListTypeDef = gql`
 
     type ProductId {
-        id:ID!
+        id: ID!
     }
 
     type WishList {
         id:ID!,
         userId:ID!,
-        products:[ProductId!]!
+        products:[ProductId!]
         createdAt: Date!
     }
 
-    input CreateWishList {
+    input ProductIdInput {
+        id: ID!
+    }
+    
+    input WishListInput {
         userId:ID!,
-        products:[ProductId!]!
+        products:[ProductIdInput!]
     }
     
     type Mutation {
-        createWishList(input:CreateWishList):WishList
+        addToWishList(input:WishListInput):WishList
+    }
+
+    type Query {
+        wishListByUserId(userId:ID):WishList
     }
 `
 

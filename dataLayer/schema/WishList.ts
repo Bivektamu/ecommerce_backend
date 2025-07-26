@@ -1,28 +1,28 @@
 import mongoose, { Schema } from "mongoose";
 
-const WishListSchema = new Schema({
-    userId: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'User'
-    },
-
-    products: [{
-        id: {
+const WishListSchema = new Schema(
+    {
+        userId: {
             type: Schema.Types.ObjectId,
             required: true,
-            ref: 'Product'
+            ref: 'User'
         },
 
-    }]
-    ,
-    createAt: {
-        type: Date,
-        default: Date.now
+        products: [
+            {
+                id: {
+                    type: Schema.Types.ObjectId,
+                    required: true,
+                    ref: 'Product'
+                }
+            },
+        ]
     },
+    {
+        timestamps: true,
+    }
 
-
-})
+)
 
 const WishList = mongoose.model('WishList', WishListSchema)
 export default WishList

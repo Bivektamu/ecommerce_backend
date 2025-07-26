@@ -57,6 +57,7 @@ enum Status {
         customerOrders(id:ID): [Order]
         orderByNumber(orderNumber:String): Order
     }
+    
     type Mutation {
         createOrder(input: OrderInput): String
     }

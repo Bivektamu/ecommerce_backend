@@ -7,6 +7,7 @@ import verifyUser from '../../utilities/verifyUser';
 import path from 'path';
 import fs from 'fs'
 import orderResolver from './order.resolver';
+import wishListResolver from './wishList.resolver';
 const globalResolver = {
     Upload: GraphQLUpload,
     // Mutation: {
@@ -32,4 +33,4 @@ const globalResolver = {
    
 }
 
-export default [globalResolver, customerRresolver, adminRresolver, productResolver, orderResolver]
+export default [globalResolver, customerRresolver, adminRresolver, productResolver, orderResolver, wishListResolver]

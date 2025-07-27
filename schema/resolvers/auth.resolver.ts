@@ -95,6 +95,65 @@ const authResolver = {
         }
       }
     },
+
+    changePassWord: async (parent: any, args: any, context: any) => {
+
+      try {
+
+        await new Promise(resolve=>setTimeout(resolve, 3000))
+        if (!context.token) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+        const verifiedUser = verifyUser(context.token)
+        if (!verifiedUser) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+
+        const { id, currentPassword, newPassword } = args.input
+
+
+        const validateSchema: ValidateSchema<any>[] = [
+        { 
+          value: newPassword,
+           name: 'newPassword', 
+           msg: 'Please insert new password in correct format.',
+           type: 'password'
+          },
+      ]
+      const errors: FormError = validateForm(validateSchema)
+      if (Object.keys(errors).length > 0) {
+        throw new Error(JSON.stringify(errors))
+      }
+
+        const user = await User.findById(id)
+
+        if (!user) {
+          throw new Error(ErrorCode.USER_NOT_FOUND)
+        }
+
+        const isMatched = await bcrypt.compare(currentPassword, user.password)
+
+        if (!isMatched) {
+          throw new Error(ErrorCode.INPUT_ERROR)
+        }
+
+        const salt = bcrypt.genSaltSync(8)
+        const hashedPassword = bcrypt.hashSync(newPassword, salt)
+
+        await User.findByIdAndUpdate(id, {
+          password: hashedPassword
+        })
+
+        return true
+
+
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+        }
+      }
+    },
+
   },
   Query: {
     getAuthStatus: (parent: any, args: any, context: any) => {

@@ -11,15 +11,7 @@ const globalTypeDef = gql`
     }
     
     
-    input LogInInput {
-      email:String!,
-      password: String!
-    }
-
-    type User {
-      role: String!,
-      id: ID!
-    }
+    
     
  
   `

@@ -4,18 +4,18 @@ import gql from "graphql-tag";
 const wishListTypeDef = gql`
 
     type ProductId {
-        id: ID!
+        id: ID!,
+        createdAt: Date!
     }
 
     type WishList {
         id:ID!,
         userId:ID!,
         products:[ProductId!]
-        createdAt: Date!
     }
 
     input ProductIdInput {
-        id: ID!
+        id: ID!,
     }
     
     input WishListInput {

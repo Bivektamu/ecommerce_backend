@@ -14,13 +14,14 @@ const WishListSchema = new Schema(
                     type: Schema.Types.ObjectId,
                     required: true,
                     ref: 'Product'
+                },
+                createdAt: {
+                    type: Date,
+                    default: Date.now()
                 }
             },
         ]
     },
-    {
-        timestamps: true,
-    }
 
 )
 

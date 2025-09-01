@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-const customerTypeDef = gql`
+const UserTypeDef = gql`
 
  type Address {
         street: String,
@@ -13,11 +13,11 @@ const customerTypeDef = gql`
 
     enum UserRole {
         admin,
-        customer
+        User
     }
 
 
-    type Customer {
+    type User {
         id: ID!,
         firstName: String!,
         lastName: String!,
@@ -26,7 +26,7 @@ const customerTypeDef = gql`
         role: UserRole
     }
 
-    input CustomerInput {
+    input UserInput {
         firstName: String!,
         lastName: String!,
         email:String!,
@@ -41,23 +41,25 @@ const customerTypeDef = gql`
         country: String!,
     }
 
-    type CustomerName {
-        firstName: String,
-        lastName: String,
+    input UpdateAccount {
+        firstName: String!,
+        lastName: String!,
+        email:String!,
     }
 
+
     type Query {
-        customers: [Customer],
-        customer(id:ID): Customer,
-        customerEmail(id:ID): String,
-        customerName(id:ID): CustomerName
+        users: [User],
+        user(id:ID): User,
+        userEmail(id:ID): String,
     }
 
     type Mutation {
-        createCustomer(input:CustomerInput): Customer,
-        deleteCustomer(id: ID): ReturnType,
-        updateAddress(input: AddressInput): Address
+        createUser(input:UserInput): User,
+        deleteUser(id: ID): ReturnType,
+        updateAddress(input: AddressInput): Address,
+        updateAccount(input: UpdateAccount): User
     }
 `
 
-export default customerTypeDef
+export default UserTypeDef

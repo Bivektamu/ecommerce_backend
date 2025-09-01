@@ -1,9 +1,9 @@
 import authTypeDef from "./auth.typeDef";
-import customerTypeDef from "./customer.typeDef";
+import userTypeDef from "./user.typeDef";
 import globalTypeDef from "./global.typeDef";
 import orderTypeDef from "./order.typeDef";
 import productTypeDef from "./product.typeDef";
 import reviewTypeDef from "./review.typeDef";
 import wishListTypeDef from "./wishList.typeDef";
 
-export default [globalTypeDef, authTypeDef, customerTypeDef, productTypeDef, reviewTypeDef, orderTypeDef, wishListTypeDef]
+export default [globalTypeDef, authTypeDef, userTypeDef, productTypeDef, reviewTypeDef, orderTypeDef, wishListTypeDef]

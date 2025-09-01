@@ -1,15 +1,39 @@
 
 import { GraphQLUpload } from 'graphql-upload-ts'
 import adminRresolver from "./auth.resolver";
-import customerRresolver from "./customer.resolver";
+import userRresolver from "./user.resolver";
 import productResolver from './product.resolver';
 import verifyUser from '../../utilities/verifyUser';
-import path from 'path';
-import fs from 'fs'
 import orderResolver from './order.resolver';
 import wishListResolver from './wishList.resolver';
+import reviewResolver from './review.resolver';
+import { GraphQLScalarType, Kind } from "graphql"
+
+
+const DateScalar = new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    serialize(value: any) {
+        // Convert outgoing Date to ISO string
+        return value.toISOString();
+    },
+    parseValue(value: any) {
+        // Convert incoming ISO string to Date
+        return new Date(value);
+    },
+    parseLiteral(ast) {
+        if (ast.kind === Kind.STRING) {
+            return new Date(ast.value); // Convert hard-coded string to Date
+        }
+        return null;
+    },
+});
+
+
 const globalResolver = {
     Upload: GraphQLUpload,
+    Date: DateScalar,
+    
     // Mutation: {
     //     uploadFile: async (parent: any, args: any) => {
 
@@ -33,4 +57,4 @@ const globalResolver = {
    
 }
 
-export default [globalResolver, customerRresolver, adminRresolver, productResolver, orderResolver, wishListResolver]
+export default [globalResolver, userRresolver, adminRresolver, productResolver, orderResolver, wishListResolver, reviewResolver]

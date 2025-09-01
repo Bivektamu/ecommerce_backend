@@ -37,7 +37,7 @@ const authResolver = {
       }
 
     },
-    logInCustomer: async (parent: any, args: any, context: any) => {
+    logInUser: async (parent: any, args: any, context: any) => {
 
       try {
         const { email, password } = args.input

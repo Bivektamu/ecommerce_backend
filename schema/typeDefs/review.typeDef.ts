@@ -4,19 +4,20 @@ const reviewTypeDef = gql`
 
     type Review {
         id: ID!,
-        customerId: ID!,
+        userId: ID!,
         productId: ID!,
         rating: Int!,
         review: String!,
-        timeStamp: Date!
+        createdAt:Date!,
+        updateAt: Date
     }
     
     type Query {
-        reviewsByProductId(id: ID): [Review]
+        productReviews(id: ID): [Review]
     }
 
     input CreateReview {
-        customerId: ID!,
+        userId: ID!,
         productId: ID!,
         rating: Int!,
         review: String!

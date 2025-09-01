@@ -5,50 +5,43 @@ import bcrypt from 'bcrypt'
 import verifyUser from "../../utilities/verifyUser";
 import { GraphQLError } from "graphql";
 
-const customerRresolver = {
+const userRresolver = {
   Query: {
-    customers: async (parent: any, args: any, context: any) => {
+    users: async (parent: any, args: any, context: any) => {
       if (!context.token) {
-        throw new Error('Not Authenticated')
+        throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
       const user = verifyUser(context.token)
       if (user?.role !== UserRole.ADMIN) {
-        throw new Error('Not Authenticated')
+        throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
-      const customers = await User.find()
-      return customers
+      const users = await User.find()
+      return users
     },
-    customer: async (parent: any, args: any, context: any) => {
+    user: async (parent: any, args: any, context: any) => {
       if (!context.token) {
-        throw new Error('Not Authenticated')
+        throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
       const user = verifyUser(context.token)
       if (!user) {
-        throw new Error('Not Authenticated')
+        throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
       const id = args.id
-      const findCustomer = await User.findById(id)
-      return findCustomer
+      const findUser = await User.findById(id)
+      return findUser
     },
-    customerEmail: async (parent: any, args: any) => {
+    userEmail: async (parent: any, args: any) => {
       const id = args.id
-      const findCustomer = await User.findById(id)
-      if (!findCustomer) {
-        throw new Error('Customer email not found')
+      const finduser = await User.findById(id)
+      if (!finduser) {
+        throw new Error(ErrorCode.NOT_FOUND)
       }
-      return findCustomer.email
+      return finduser.email
     },
-    customerName: async (parent: any, args: any) => {
-      const id = args.id
-      const findCustomer = await User.findById(id)
-      if (!findCustomer) {
-        throw new Error('Customer email not found')
-      }
-      return { firstName: findCustomer.firstName, lastName: findCustomer.lastName }
-    }
+  
   },
   Mutation: {
-    createCustomer: async (parent: any, args: any) => {
+    createUser: async (parent: any, args: any) => {
       const { email, password, firstName, lastName } = args.input
 
       const validateSchema: ValidateSchema<any>[] = [
@@ -62,8 +55,8 @@ const customerRresolver = {
         throw new Error(JSON.stringify(errors))
       }
 
-      const customerExists = await User.findOne({ email: email.toLowerCase() })
-      if (customerExists) {
+      const userExists = await User.findOne({ email: email.toLowerCase() })
+      if (userExists) {
         throw new Error('User already exists')
       }
 
@@ -81,7 +74,7 @@ const customerRresolver = {
 
       return await user.save()
     },
-    deleteCustomer: async (parent: any, args: any) => {
+    deleteUser: async (parent: any, args: any) => {
       const { id } = args
 
       try {
@@ -102,17 +95,14 @@ const customerRresolver = {
         }
       }
     },
-
     updateAddress: async (parent: any, args: any, context: any) => {
-
-
       if (!context.token) {
-        throw new Error('Not Authenticated')
+        throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
 
       const user = verifyUser(context.token)
       if (!user || user.role !== UserRole.CUSTOMER) {
-        throw new Error('Not Authenticated')
+        throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
 
       const { street, city, state, postcode, country } = args.input
@@ -130,9 +120,9 @@ const customerRresolver = {
       if (Object.keys(errors).length > 0) {
         throw new Error(JSON.stringify(errors))
       }
-      const findCustomer = await User.findById(user.id)
-      if (!findCustomer) {
-        throw new Error('Customer not found')
+      const finduser = await User.findById(user.id)
+      if (!finduser) {
+        throw new Error(ErrorCode.USER_NOT_FOUND)
       }
       const address: Address = {
         street, city, state, country, postcode
@@ -157,7 +147,7 @@ const customerRresolver = {
         else throw new GraphQLError('Sorry address could not updated. Please try later',
           {
             extensions: {
-              code : ErrorCode.SHIPPING_ADDRESS_ERROR
+              code: ErrorCode.SHIPPING_ADDRESS_ERROR
             }
           }
         )
@@ -168,9 +158,56 @@ const customerRresolver = {
           throw new Error(error.message)
       }
 
+    },
+    updateAccount: async (parent: any, args: any, context: any) => {
+      try {
+
+        if (!context.token) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+
+        const user = verifyUser(context.token)
+        if (!user || user.role !== UserRole.CUSTOMER) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+
+        const { firstName, lastName, email } = args.input
+
+        const validateSchema: ValidateSchema<any>[] = [
+          { value: firstName, name: 'firstName', type: 'string' },
+          { value: lastName, name: 'lastName', type: 'string' },
+          { value: email, name: 'email', type: 'email' },
+        ]
+
+        const errors: FormError = validateForm(validateSchema)
+
+        if (Object.keys(errors).length > 0) {
+          throw new Error(JSON.stringify(errors))
+        }
+        const finduser = await User.findById(user.id)
+        if (!finduser) {
+          throw new Error(ErrorCode.USER_NOT_FOUND)
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+          user.id,
+          {
+            firstName,
+            lastName,
+            email
+          },
+          {new: true}
+        )
+
+        return updatedUser
+      } catch (error) {
+        if (error instanceof Error)
+          throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+      }
+
     }
 
   }
 };
 
-export default customerRresolver
+export default userRresolver

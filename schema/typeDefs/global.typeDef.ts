@@ -10,10 +10,6 @@ const globalTypeDef = gql`
         value:String
     }
     
-    
-    
-    
- 
   `
 
 export default globalTypeDef

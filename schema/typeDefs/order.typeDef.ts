@@ -54,7 +54,7 @@ enum Status {
 
     type Query {
         orders: [Order]
-        customerOrders(id:ID): [Order]
+        userOrders(id:ID): [Order]
         orderByNumber(orderNumber:String): Order
     }
     

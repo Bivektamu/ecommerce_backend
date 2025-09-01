@@ -1,37 +1,26 @@
 import { Query } from "mongoose";
 import Review from "../../dataLayer/schema/Review";
-import { GraphQLScalarType, Kind } from "graphql"
-
-import { FormError, ReviewType, User, ValidateSchema } from "../../typeDefs";
+import { ErrorCode, FormError, ReviewType, User, UserRole, ValidateSchema } from "../../typeDefs";
 import verifyUser from "../../utilities/verifyUser";
 import validateForm from "../../utilities/validateForm";
 
-const DateScalar = new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
-    serialize(value: any) {
-        // Convert outgoing Date to ISO string
-        return value.toISOString();
-    },
-    parseValue(value: any) {
-        // Convert incoming ISO string to Date
-        return new Date(value);
-    },
-    parseLiteral(ast) {
-        if (ast.kind === Kind.STRING) {
-            return new Date(ast.value); // Convert hard-coded string to Date
-        }
-        return null;
-    },
-});
 const reviewResolver = {
-    Date: DateScalar,
     Query: {
-        reviewsByProductId: async (parent: any, args: any) => {
-            const productId = args.id
-            const reviews = await Review.find({ productId })
-            return reviews
-        }
+        productReviews: async (parent: any, args: any) => {
+            try {
+                const productId = args.id
+                const reviews = await Review.find({ productId })
+                return reviews
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+                }
+
+            }
+
+        },
+
+
     },
     Mutation: {
         createReview: async (parentparent: any, args: any, context: any) => {
@@ -41,11 +30,9 @@ const reviewResolver = {
                 throw new Error('Not Authenticated')
             }
 
-
-
             const user = verifyUser(context.token)
 
-            if (!user || user.role !== User.CUSTOMER) {
+            if (!user || user.role !== UserRole.CUSTOMER) {
                 throw new Error('Not Authenticated')
             }
 

@@ -20,6 +20,7 @@ const productResolver = {
       //   throw new Error('Not Authenticated')
       // }
       const products = await Product.find()
+
       return products
 
       // return products.map(({__typename, ...rest})=>rest)

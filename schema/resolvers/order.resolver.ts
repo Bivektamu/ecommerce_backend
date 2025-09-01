@@ -1,4 +1,4 @@
-import Customer from "../../dataLayer/schema/User"
+import UserSchem from "../../dataLayer/schema/User"
 import Order from "../../dataLayer/schema/Order"
 import { ErrorCode, User, UserRole } from "../../typeDefs"
 import verifyUser from "../../utilities/verifyUser"
@@ -25,9 +25,11 @@ const orderResolver = {
                 }
             }
         },
-        customerOrders: async (parent: any, args: any, context: any) => {
+        userOrders: async (parent: any, args: any, context: any) => {
 
             try {
+
+                console.log('sdf')
                 if (!context.token) {
                     throw new Error(ErrorCode.NOT_AUTHENTICATED)
                 }
@@ -43,7 +45,7 @@ const orderResolver = {
                 }
 
                 const id = args.id
-                const findCustomer = await Customer.findById(id)
+                const findUser = await UserSchem.findById(id)
                 if (!user) {
                     throw new GraphQLError('Not Authenticated', {
                         extensions: {

@@ -9,7 +9,7 @@ const authTypeDef = gql`
       password: String!
     }
 
-    type User {
+    type UserAuth {
       role: String!,
       id: ID!
     }
@@ -17,7 +17,7 @@ const authTypeDef = gql`
     
     type getAuthStatusPayload {
       isLoggedIn: Boolean!,
-      user:User
+      user:UserAuth
     }
 
     input ChangePassword {
@@ -28,7 +28,7 @@ const authTypeDef = gql`
 
   type Mutation {
     logInAdmin(input: LogInInput!): Token,
-    logInCustomer(input: LogInInput!): Token,
+    logInUser(input: LogInInput!): Token,
     changePassWord(input:ChangePassword):Boolean
   }
 

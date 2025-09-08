@@ -51,6 +51,10 @@ enum Status {
         items: [OrderItemInput!]!,
         shippingAddress: AddressInput!
     }
+        input OrderStatus {
+            id: ID!,
+            status:Status!
+        }
 
     type Query {
         orders: [Order]
@@ -60,6 +64,7 @@ enum Status {
     
     type Mutation {
         createOrder(input: OrderInput): String
+        updateOrderStatus(input: OrderStatus):Status
     }
 `
 

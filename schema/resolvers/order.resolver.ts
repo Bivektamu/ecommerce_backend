@@ -11,6 +11,27 @@ const orderResolver = {
 
             try {
                 // await new Promise((resolve) => setTimeout(resolve, 5000));
+                if (!context.token) {
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                }
+
+                const user = verifyUser(context.token)
+
+                if (!user) {
+                    throw new GraphQLError('Not Authenticated', {
+                        extensions: {
+                            code: ErrorCode.NOT_AUTHENTICATED
+                        }
+                    })
+                }
+
+                if (user && user.role === UserRole.CUSTOMER) {
+                    throw new GraphQLError('Not Authenticated', {
+                        extensions: {
+                            code: ErrorCode.NOT_AUTHENTICATED
+                        }
+                    })
+                }
 
                 const orders = await Order.find()
                 return orders
@@ -28,8 +49,6 @@ const orderResolver = {
         userOrders: async (parent: any, args: any, context: any) => {
 
             try {
-
-                console.log('sdf')
                 if (!context.token) {
                     throw new Error(ErrorCode.NOT_AUTHENTICATED)
                 }
@@ -144,6 +163,44 @@ const orderResolver = {
                     throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
                 }
 
+            }
+
+        },
+        updateOrderStatus: async (parent: any, args: any, context: any) => {
+
+            if (!context.token) {
+                throw new Error(ErrorCode.NOT_AUTHENTICATED)
+            }
+
+            const user = verifyUser(context.token)
+            if (!user) {
+                throw new Error(ErrorCode.NOT_AUTHENTICATED)
+            }
+
+            if (user.role !== UserRole.ADMIN) {
+                throw new Error(ErrorCode.NOT_AUTHENTICATED)
+            }
+
+            const { id, status } = args.input
+
+            try {
+                const updateState = await Order.updateOne(
+                    { _id: id },
+                    {
+                        $set: {
+                            status
+                        }
+                    }
+                )
+                const { acknowledged, modifiedCount } = updateState
+                if (acknowledged && modifiedCount === 1) {
+                    return status
+                }
+                else throw new Error(ErrorCode.INTERNAL_SERVER_ERROR)
+
+            } catch (error) {
+                if (error instanceof Error)
+                    throw new Error(error.message)
             }
 
         }

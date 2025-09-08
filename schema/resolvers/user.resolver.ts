@@ -19,6 +19,7 @@ const userRresolver = {
       return users
     },
     user: async (parent: any, args: any, context: any) => {
+
       if (!context.token) {
         throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
@@ -27,6 +28,7 @@ const userRresolver = {
         throw new Error(ErrorCode.NOT_AUTHENTICATED)
       }
       const id = args.id
+
       const findUser = await User.findById(id)
       return findUser
     },
@@ -144,14 +146,7 @@ const userRresolver = {
         if (acknowledged && modifiedCount === 1) {
           return address
         }
-        else throw new GraphQLError('Sorry address could not updated. Please try later',
-          {
-            extensions: {
-              code: ErrorCode.SHIPPING_ADDRESS_ERROR
-            }
-          }
-        )
-
+        else throw new Error(ErrorCode.INTERNAL_SERVER_ERROR)
 
       } catch (error) {
         if (error instanceof Error)

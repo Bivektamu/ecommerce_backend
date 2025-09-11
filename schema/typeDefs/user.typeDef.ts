@@ -13,7 +13,7 @@ const UserTypeDef = gql`
 
     enum UserRole {
         admin,
-        User
+        customer
     }
 
 
@@ -24,6 +24,7 @@ const UserTypeDef = gql`
         email:String!,
         address: Address,
         role: UserRole
+        registeredDate: Date
     }
 
     input UserInput {

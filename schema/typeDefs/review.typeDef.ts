@@ -14,6 +14,7 @@ const reviewTypeDef = gql`
     
     type Query {
         productReviews(id: ID): [Review]
+        reviews:[Review]
     }
 
     input CreateReview {

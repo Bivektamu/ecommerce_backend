@@ -40,7 +40,7 @@ const userRresolver = {
       }
       return finduser.email
     },
-  
+
   },
   Mutation: {
     createUser: async (parent: any, args: any) => {
@@ -76,10 +76,20 @@ const userRresolver = {
 
       return await user.save()
     },
-    deleteUser: async (parent: any, args: any) => {
+
+    deleteUser: async (parent: any, args: any, context: any) => {
+      try {
+
+        if (!context.token) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+        const user = verifyUser(context.token)
+        if (!user) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+
       const { id } = args
 
-      try {
         const deletedUser = await User.findByIdAndDelete(id)
         if (deletedUser) {
           return {
@@ -191,7 +201,7 @@ const userRresolver = {
             lastName,
             email
           },
-          {new: true}
+          { new: true }
         )
 
         return updatedUser

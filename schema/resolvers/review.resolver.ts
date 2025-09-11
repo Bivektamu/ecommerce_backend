@@ -19,6 +19,29 @@ const reviewResolver = {
             }
 
         },
+        reviews: async (parent:any, args: any, context: any) => {
+
+            try {
+                if (!context.token) {
+                    throw new Error('Not Authenticated')
+                }
+
+                const user = verifyUser(context.token)
+
+                if (!user || user.role !== UserRole.ADMIN) {
+                    throw new Error('Not Authenticated')
+                }
+
+                const reviews = await Review.find()
+                return reviews
+
+            } catch (error) {
+                if(error instanceof Error) {
+                    throw new Error(error.message)
+                }
+
+            }
+        }
 
 
     },

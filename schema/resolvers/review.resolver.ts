@@ -46,7 +46,7 @@ const reviewResolver = {
 
     },
     Mutation: {
-        createReview: async (parentparent: any, args: any, context: any) => {
+        createReview: async (parent: any, args: any, context: any) => {
 
             if (!context.token) {
                 throw new Error('Not Authenticated')
@@ -58,12 +58,12 @@ const reviewResolver = {
                 throw new Error('Not Authenticated')
             }
 
-            const { rating, productId, customerId, review } = args.input
+            const { rating, productId, userId, review } = args.input
 
             const validateSchema: ValidateSchema<any>[] = [
                 { value: rating, name: 'rating', type: 'number' },
                 { value: productId, name: 'productId', type: 'string' },
-                { value: customerId, name: 'customerId', type: 'string' },
+                { value: userId, name: 'userId', type: 'string' },
                 { value: review, name: 'review', type: 'string' },
             ]
 
@@ -75,7 +75,7 @@ const reviewResolver = {
             const newReview = new Review({
                 rating,
                 productId,
-                customerId,
+                userId,
                 review
             })
 

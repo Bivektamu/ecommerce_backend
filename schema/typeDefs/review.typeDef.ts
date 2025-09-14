@@ -23,8 +23,16 @@ const reviewTypeDef = gql`
         rating: Int!,
         review: String!
     }
+    
+    input EditReview {
+        id:ID!,
+        rating: Int!,
+        review: String!
+    }
     type Mutation {
         createReview(input:CreateReview):Review
+        editReview(input:EditReview):Review
+        deleteReview(id:ID):ReturnType
     }
 `
 

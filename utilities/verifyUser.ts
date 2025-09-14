@@ -6,8 +6,6 @@ const verifyUser = (token: string) => {
 
         const verifiedUser: CustomJwtPayload = verify(token, process.env.JWTSECRET as string) as CustomJwtPayload
 
-        console.log(verifiedUser)
-
         if (verifiedUser) {
             const user: verifiedUser = {
                 role: verifiedUser.role,

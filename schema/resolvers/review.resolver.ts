@@ -19,7 +19,7 @@ const reviewResolver = {
             }
 
         },
-        reviews: async (parent:any, args: any, context: any) => {
+        reviews: async (parent: any, args: any, context: any) => {
 
             try {
                 if (!context.token) {
@@ -36,7 +36,7 @@ const reviewResolver = {
                 return reviews
 
             } catch (error) {
-                if(error instanceof Error) {
+                if (error instanceof Error) {
                     throw new Error(error.message)
                 }
 
@@ -82,8 +82,78 @@ const reviewResolver = {
             return await newReview.save()
 
 
+        },
+        editReview: async (parent: any, args: any, context: any) => {
+
+            try {
+                if (!context.token) {
+                    throw new Error('Not Authenticated')
+                }
+
+                const user = verifyUser(context.token)
+
+                if (!user || user.role !== UserRole.CUSTOMER) {
+                    throw new Error('Not Authenticated')
+                }
+
+                const { rating, review, id } = args.input
+
+                const validateSchema: ValidateSchema<any>[] = [
+                    { value: rating, name: 'rating', type: 'number' },
+                    { value: review, name: 'review', type: 'string' },
+                ]
+
+                const errors: FormError = validateForm(validateSchema)
+                if (Object.keys(errors).length > 0) {
+                    throw new Error(JSON.stringify(errors))
+                }
+
+                const editedReview = await Review.findByIdAndUpdate(
+                    id,
+                    {
+                        rating,
+                        review
+                    })
+
+                return editedReview
+
+
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message)
+                }
+            }
+        },
+        deleteReview: async (parent: any, args: any, context: any) => {
+
+            try {
+                if (!context.token) {
+                    throw new Error('Not Authenticated')
+                }
+
+                const user = verifyUser(context.token)
+
+                if (!user) {
+                    throw new Error('Not Authenticated')
+                }
+
+                const { id } = args
+                const deletedReview = await Review.findByIdAndDelete(id)
+                if (deletedReview) {
+                    return {
+                        success: true,
+                    }
+
+                }
+                throw new Error('Review not found')
+            }
+            catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message)
+                }
+            }
         }
     }
-}
+};
 
 export default reviewResolver

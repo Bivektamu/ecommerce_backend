@@ -134,9 +134,8 @@ const productResolver = {
           if (error) throw error
         }
       } catch (error) {
-        if (error) {
-          throw error
-
+        if (error instanceof Error) {
+          throw new Error(error.message)
         }
       }
 

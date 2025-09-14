@@ -86,5 +86,5 @@ export enum ErrorCode {
     VALIDATION_ERROR = 'VALIDATION_ERROR',
     INPUT_ERROR = 'INPUT_ERROR',
     NOT_FOUND = 'NOT_FOUND',
-
+    JWT_ERROR = 'JWT_ERROR'
 } 

@@ -48,7 +48,6 @@ const reviewResolver = {
     Mutation: {
         createReview: async (parentparent: any, args: any, context: any) => {
 
-
             if (!context.token) {
                 throw new Error('Not Authenticated')
             }

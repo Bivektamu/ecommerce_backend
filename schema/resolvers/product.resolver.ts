@@ -26,10 +26,7 @@ const productResolver = {
       // return products.map(({__typename, ...rest})=>rest)
     },
     product: async (parent: any, args: any, context: any) => {
-      const admin = context.admin
-      if (!admin) {
-        throw new Error('Not Authenticated')
-      }
+      
       const id = args.id
       const findproduct = await Product.findById(id)
       return findproduct

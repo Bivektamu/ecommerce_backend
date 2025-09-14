@@ -20,17 +20,27 @@ const userRresolver = {
     },
     user: async (parent: any, args: any, context: any) => {
 
-      if (!context.token) {
-        throw new Error(ErrorCode.NOT_AUTHENTICATED)
-      }
-      const user = verifyUser(context.token)
-      if (!user) {
-        throw new Error(ErrorCode.NOT_AUTHENTICATED)
-      }
-      const id = args.id
+      try {
 
-      const findUser = await User.findById(id)
-      return findUser
+        if (!context.token) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+        const user = verifyUser(context.token)
+
+        if (!user) {
+          throw new Error(ErrorCode.NOT_AUTHENTICATED)
+        }
+        const id = args.id
+
+        const findUser = await User.findById(id)
+        return findUser
+
+      } catch (error) {
+        if(error instanceof Error) {
+          throw new Error(error.message)
+        }
+
+      }
     },
     userEmail: async (parent: any, args: any) => {
       const id = args.id
@@ -39,6 +49,18 @@ const userRresolver = {
         throw new Error(ErrorCode.NOT_FOUND)
       }
       return finduser.email
+    },
+    publicUserDetails: async (parent: any, args: any) => {
+      const id = args.id
+      const finduser = await User.findById(id)
+      if (!finduser) {
+        throw new Error(ErrorCode.NOT_FOUND)
+      }
+      const user = {
+        firstName: finduser.firstName,
+        lastName: finduser.lastName,
+      }
+      return user
     },
 
   },
@@ -88,7 +110,7 @@ const userRresolver = {
           throw new Error(ErrorCode.NOT_AUTHENTICATED)
         }
 
-      const { id } = args
+        const { id } = args
 
         const deletedUser = await User.findByIdAndDelete(id)
         if (deletedUser) {

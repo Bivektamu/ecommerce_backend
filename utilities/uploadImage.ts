@@ -60,7 +60,6 @@ const uploadImage = async (item: inputProductImg, folder: string, name: string) 
   // // Check if the directory exists
   // if (!fs.existsSync(directory)) {
   //   // Create the directory (and any necessary subdirectories)
-  //   console.log(folder);
 
   //   fs.mkdirSync(directory, { recursive: true });
   // }

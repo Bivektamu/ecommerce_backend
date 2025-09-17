@@ -9,7 +9,10 @@ const reviewResolver = {
         productReviews: async (parent: any, args: any) => {
             try {
                 const productId = args.id
-                const reviews = await Review.find({ productId })
+                if(!productId) {
+                    throw new Error(ErrorCode.INPUT_ERROR)
+                }
+                const reviews = await Review.find({ productId }).populate('userId', 'email firstName lastName')
                 return reviews
             } catch (error) {
                 if (error instanceof Error) {
@@ -32,7 +35,8 @@ const reviewResolver = {
                     throw new Error('Not Authenticated')
                 }
 
-                const reviews = await Review.find()
+                const reviews = await Review.find().populate("userId", "firstName lastName email").populate('productId', 'title imgs')
+
                 return reviews
 
             } catch (error) {

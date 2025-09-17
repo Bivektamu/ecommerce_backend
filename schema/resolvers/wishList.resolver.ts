@@ -59,7 +59,6 @@ const wishListResolver = {
 
                 //     await wishList.save()
 
-                //     console.log(wishList)
                 //     return wishList
                 // }
 

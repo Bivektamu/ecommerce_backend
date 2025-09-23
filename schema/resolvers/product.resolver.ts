@@ -7,6 +7,7 @@ import uploadImage from "../../utilities/uploadImage";
 import { inputProductImg, ProductImage } from '../../typeDefs';
 import deleteImage from '../../utilities/deleteImage';
 
+
 const productResolver = {
   Query: {
     products: async (parent: any, args: any, context: any) => {
@@ -26,7 +27,7 @@ const productResolver = {
       // return products.map(({__typename, ...rest})=>rest)
     },
     product: async (parent: any, args: any, context: any) => {
-      
+
       const id = args.id
       const findproduct = await Product.findById(id)
       return findproduct
@@ -54,16 +55,11 @@ const productResolver = {
           throw new Error('Product Already Exists')
         }
 
-        const folder = `public/upload/product`
+        const folder = `products/${category}/`
+      
 
-        let newImgs = []
-
-        try {
-          const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
-          newImgs = await Promise.all(uploadPromises);
-        } catch (error) {
-          throw error
-        }
+        const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, slug, folder))
+        const newImgs = await Promise.all(uploadPromises);
 
         const newProduct = new Product({
           title, slug, description, colors, sizes, price, quantity, category, sku, stockStatus, featured, imgs: newImgs
@@ -101,12 +97,12 @@ const productResolver = {
 
         // loop thorugh old images and filter out if its its exists in new images or not
         if (productExists?.imgs.length > oldImgs.length) {
-          const imgToDelete = productExists?.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.fileName)
+          const imgToDelete = productExists?.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.url)
           imgToDelete.map(img => deleteImage(img))
         }
 
         if (newImgs.length > 0) {
-          const folder = `public/upload/product`
+          const folder = `products/${category}/`
 
           try {
             const uploadPromises = newImgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
@@ -117,7 +113,6 @@ const productResolver = {
             throw error
           }
         }
-
 
         try {
           const updatedProduct = await Product.findByIdAndUpdate(
@@ -138,7 +133,6 @@ const productResolver = {
           throw new Error(error.message)
         }
       }
-
     },
 
     // Delete Product Mutation
@@ -158,7 +152,7 @@ const productResolver = {
       try {
         const product = await Product.findById(id)
         if (product) {
-          const imgstoDelete = product?.imgs.map(img => img.fileName)
+          const imgstoDelete = product?.imgs.map(img => img.url)
 
           imgstoDelete.map(img => deleteImage(img))
 

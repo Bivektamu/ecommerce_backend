@@ -11,8 +11,6 @@ const connectDB = async () => {
     console.log('Database Connected')
   } catch (error) 
   {
-    console.clear()
-
     console.log(error)
     process.exit(1)
   }

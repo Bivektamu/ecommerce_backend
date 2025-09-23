@@ -57,12 +57,8 @@ const ProductSchema = new Schema({
                 url: {
                     type: String,
                     required: true
-                },
+                }
 
-                fileName: {
-                    type: String,
-                    required: true
-                },
             }
 
         ]

@@ -21,7 +21,6 @@ const productTypeDef = gql`
     type ProductImg {
         id:ID!
         url:String!
-        fileName:String!
     }
    
     type Product {
@@ -41,14 +40,13 @@ const productTypeDef = gql`
     }
 
     input inputProductImg {
-        _id:ID!,
         img:Upload!
+        _id: ID!
     }
 
      input inputProductImgWithUrl {
         id:ID!
         url:String!
-        fileName:String!
     }
 
     input CreateProduct {

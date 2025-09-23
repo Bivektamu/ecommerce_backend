@@ -42,14 +42,12 @@ export interface MyContext {
 
 
 export interface inputProductImg {
-    _id: string,
     img: any
 }
 
 export interface ProductImage {
     _id: ObjectId,
     url: string,
-    fileName: string
 }
 
 export interface FormError {

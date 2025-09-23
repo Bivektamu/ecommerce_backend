@@ -5,7 +5,7 @@ import Product from "../../dataLayer/schema/Product";
 import verifyUser from "../../utilities/verifyUser";
 import uploadImage from "../../utilities/uploadImage";
 import { inputProductImg, ProductImage } from '../../typeDefs';
-import deleteImage from '../../utilities/deleteImage';
+import deleteImages from '../../utilities/deleteImages';
 
 
 const productResolver = {
@@ -56,7 +56,7 @@ const productResolver = {
         }
 
         const folder = `products/${category}/`
-      
+
 
         const uploadPromises = imgs.map((item: inputProductImg) => uploadImage(item, slug, folder))
         const newImgs = await Promise.all(uploadPromises);
@@ -95,23 +95,20 @@ const productResolver = {
 
         let toUpdateImgs = [...oldImgs]
 
+
+
         // loop thorugh old images and filter out if its its exists in new images or not
-        if (productExists?.imgs.length > oldImgs.length) {
-          const imgToDelete = productExists?.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.url)
-          imgToDelete.map(img => deleteImage(img))
+        if (productExists.imgs.length > oldImgs.length) {
+          const imgToDelete = productExists.imgs.filter(img => oldImgs.findIndex((oldImg: any) => oldImg.id === img.id) < 0).map(img => img.url)
+          console.log(imgToDelete)
+          deleteImages(imgToDelete)
         }
 
         if (newImgs.length > 0) {
           const folder = `products/${category}/`
-
-          try {
-            const uploadPromises = newImgs.map((item: inputProductImg) => uploadImage(item, folder, slug))
-            const uploadedImgs = await Promise.all(uploadPromises);
-            toUpdateImgs = [...toUpdateImgs, ...uploadedImgs]
-
-          } catch (error) {
-            throw error
-          }
+          const uploadPromises = newImgs.map((item: inputProductImg) => uploadImage(item, slug, folder))
+          const uploadedImgs = await Promise.all(uploadPromises);
+          toUpdateImgs = [...toUpdateImgs, ...uploadedImgs]
         }
 
         try {
@@ -137,41 +134,38 @@ const productResolver = {
 
     // Delete Product Mutation
     deleteProduct: async (parent: any, args: any, context: any) => {
-
-      if (!context.token) {
-        throw new Error('Not Authenticated')
-      }
-
-      const admin = verifyUser(context.token)
-      if (!admin) {
-        throw new Error('Not Authenticated')
-      }
-
-      const { id } = args
-
       try {
+
+        if (!context.token) {
+          throw new Error('Not Authenticated')
+        }
+
+        const admin = verifyUser(context.token)
+        if (!admin) {
+          throw new Error('Not Authenticated')
+        }
+
+        const { id } = args
+
         const product = await Product.findById(id)
         if (product) {
-          const imgstoDelete = product?.imgs.map(img => img.url)
+          const imgstoDelete = product.imgs.map(img => img.url)
 
-          imgstoDelete.map(img => deleteImage(img))
+          deleteImages(imgstoDelete)
 
-          const productExists = await Product.findByIdAndDelete(id)
-          if (productExists) {
+          const deletedProduct = await Product.findByIdAndDelete(id)
+          if (deletedProduct) {
             return {
               success: true,
             }
           }
         }
-
-        throw new Error('Bad Request')
       } catch (error) {
         if (error instanceof Error) {
           throw error
         }
       }
     }
-
 
   }
 };

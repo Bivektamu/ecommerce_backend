@@ -5,15 +5,12 @@ import mongoose from "mongoose";
 import { S3Client } from "@aws-sdk/client-s3"; // ES Modules import
 import { Upload } from "@aws-sdk/lib-storage"
 
-const MAZ_FILE_SIZE = 1
-
 
 const uploadImage = async (item: inputProductImg, name: string, folder: string = '') => {
-
   const file = await item.img
   const { createReadStream, filename, mimetype, encoding } = await file;
-  let uploadUrl = filename as string
-  uploadUrl = folder + name + '-' + Date.now() + Math.floor((Math.random() * 1000)) + path.extname(filename)
+  const uploadUrl = folder + name + '-' + Date.now() + Math.floor((Math.random() * 1000)) + path.extname(filename)
+
 
 
   const config = {

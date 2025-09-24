@@ -18,31 +18,24 @@ const orderResolver = {
                 const user = verifyUser(context.token)
 
                 if (!user) {
-                    throw new GraphQLError('Not Authenticated', {
-                        extensions: {
-                            code: ErrorCode.NOT_AUTHENTICATED
-                        }
-                    })
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+
                 }
 
                 if (user && user.role === UserRole.CUSTOMER) {
-                    throw new GraphQLError('Not Authenticated', {
-                        extensions: {
-                            code: ErrorCode.NOT_AUTHENTICATED
-                        }
-                    })
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+
                 }
 
-                const orders = await Order.find()
+                const orders = await Order.find().sort({
+                    orderPlaced: -1
+                })
                 return orders
 
             } catch (error) {
                 if (error instanceof Error) {
-                    throw new GraphQLError(error.message, {
-                        extensions: {
-                            code: ErrorCode.INTERNAL_SERVER_ERROR
-                        }
-                    })
+                    throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+
                 }
             }
         },
@@ -56,32 +49,23 @@ const orderResolver = {
                 const user = verifyUser(context.token)
 
                 if (!user) {
-                    throw new GraphQLError('Not Authenticated', {
-                        extensions: {
-                            code: ErrorCode.NOT_AUTHENTICATED
-                        }
-                    })
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+
                 }
 
                 const id = args.id
                 const findUser = await UserSchem.findById(id)
                 if (!user) {
-                    throw new GraphQLError('Not Authenticated', {
-                        extensions: {
-                            code: ErrorCode.NOT_AUTHENTICATED
-                        }
-                    })
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+
                 }
 
                 const orders = await Order.find({ userId: id })
                 return orders
             } catch (error) {
                 if (error instanceof Error) {
-                    throw new GraphQLError(error.message, {
-                        extensions: {
-                            code: ErrorCode.INTERNAL_SERVER_ERROR
-                        }
-                    })
+                    throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+
                 }
             }
 

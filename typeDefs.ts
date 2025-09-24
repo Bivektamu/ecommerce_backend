@@ -85,4 +85,21 @@ export enum ErrorCode {
     INPUT_ERROR = 'INPUT_ERROR',
     NOT_FOUND = 'NOT_FOUND',
     JWT_ERROR = 'JWT_ERROR'
-} 
+}
+
+export enum OrderStatus {
+    PENDING = "PENDING",
+    COMPLETED = "COMPLETED",
+    PROCESSING = "PROCESSING",
+    CANCELLED = "CANCELLED",
+    FAILED = "FAILED",
+    SHIPPED = "SHIPPED",
+    REFUNDED = "REFUNDED",
+}
+
+export enum ChangeDirection {
+    INCREASE = "INCREASE",
+    DECREASE = "DECREASE",
+    NO_CHANGE = "NO_CHANGE",
+    NO_SALES = "NO_SALES"
+}

@@ -16,19 +16,18 @@ enum ChangeDirection {
         quantity: Int!,
     }
     type CompletedOrder {
-        id: ID!,
         total: Float!,
         orderPlaced: Date!,
         category: String!
     }
 
     type YearlyStats {
-        totalOrders: Number,
-        totalSales: Number,
-        totalCustomer: Number,
+        totalOrders: Int!,
+        totalSales: Float,
+        totalUsers: Int!,
     }
     type PercentageChange {
-        changeBy: Number,
+        changeBy: Int,
         changeDirection: ChangeDirection
     }
     

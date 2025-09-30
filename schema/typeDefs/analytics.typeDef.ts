@@ -16,11 +16,19 @@ enum ChangeDirection {
         quantity: Int!,
     }
     type CompletedOrder {
+        _id:ID!
         total: Float!,
         orderPlaced: Date!,
-        category: String!
+        items: [CompletedOrderProductId!]!
     }
 
+    type CompletedOrderProductId {
+        productId: CompletedOrderProduct!
+    }
+type CompletedOrderProduct {
+        _id:ID!
+        category: String!
+    }
     type YearlyStats {
         totalOrders: Int!,
         totalSales: Float,
@@ -30,16 +38,23 @@ enum ChangeDirection {
         changeBy: Int,
         changeDirection: ChangeDirection
     }
+
+    type OrderItemsCategoryCounter {
+        cat: String!,
+        count: Int!
+    }
     
-    type MonthlyStats {
-        currentMonthOrders: [CompletedOrder],
-        changeInOrders: PercentageChange,
-        changeInSales: PercentageChange,
-        changeInUsers: PercentageChange,
+    type OrderAnalytics {
+        totalOrders: Int!,
+        totalSales: Float!,
+        monthlyOrders:[CompletedOrder]!,
+        changeInOrders: Float!,
+        changeInSales: Float!,
+        orderByCategory: [OrderItemsCategoryCounter]
     }
     type Query {
         yearlyStats: YearlyStats
-        monthlyStats: MonthlyStats
+        orderAnalytics: OrderAnalytics
         totalLowStockProducts: [LowStockProduct],
     }
 

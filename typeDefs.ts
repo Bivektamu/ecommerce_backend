@@ -97,9 +97,29 @@ export enum OrderStatus {
     REFUNDED = "REFUNDED",
 }
 
-export enum ChangeDirection {
-    INCREASE = "INCREASE",
-    DECREASE = "DECREASE",
-    NO_CHANGE = "NO_CHANGE",
-    NO_SALES = "NO_SALES"
+
+
+export interface OrderItemPopulated {
+    productId: ProductRef
 }
+export interface ProductRef {
+    _id: ObjectId,
+    category: string
+}
+
+export interface unknownShape {
+    [key: string]: number
+}
+
+export interface CompletedOrder {
+    _id: ObjectId,
+    total:number,
+    orderPlaced: Date,
+    items: OrderItemPopulated[]
+}
+
+ export type   OrderItemsCategoryCounter  = {
+        cat: string,
+        count: number
+    }
+    

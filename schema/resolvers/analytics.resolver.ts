@@ -1,24 +1,26 @@
 import Order from "../../dataLayer/schema/Order"
 import User from "../../dataLayer/schema/User"
-import { ChangeDirection, ErrorCode, OrderStatus, UserRole } from "../../typeDefs"
+import { CompletedOrder, ErrorCode, OrderItemPopulated, OrderItemsCategoryCounter, OrderStatus, unknownShape, UserRole } from "../../typeDefs"
 import verifyUser from "../../utilities/verifyUser"
+
+
 
 const analyticsResolver = {
     Query: {
         yearlyStats: async (parent: any, args: any, context: any) => {
             try {
-                if (!context.token) {
-                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
-                }
-                const user = verifyUser(context.token)
+                // if (!context.token) {
+                //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                // }
+                // const user = verifyUser(context.token)
 
-                if (!user) {
-                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
-                }
+                // if (!user) {
+                //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                // }
 
-                if (!user || user?.role !== UserRole.ADMIN) {
-                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
-                }
+                // if (!user || user?.role !== UserRole.ADMIN) {
+                //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                // }
                 let startFiscalDate
                 const currentYear = (new Date()).getFullYear()
 
@@ -62,7 +64,7 @@ const analyticsResolver = {
             }
 
         },
-        monthlyStats: async (parent: any, args: any, context: any) => {
+        orderAnalytics: async (parent: any, args: any, context: any) => {
             try {
                 // if (!context.token) {
                 //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
@@ -77,27 +79,50 @@ const analyticsResolver = {
                 //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
                 // }
 
-
-
-
                 const now = new Date()
                 const currentYear = (now).getUTCFullYear()
 
                 const currentMonth = (now).getUTCMonth()
 
                 const startDate = new Date(Date.UTC(currentYear, currentMonth, 1))
-                const endDate = new Date(Date.UTC(currentYear, currentMonth, now.getDate()))
+                const endDate = new Date(Date.UTC(currentYear, currentMonth, now.getDate(), 23, 59, 59, 999))
 
-
-                const currentMonthOrders = await Order.find({
+                const monthlyOrders = await Order.find({
                     orderPlaced: {
                         $gte: startDate,
                         $lte: endDate
                     },
                     status: OrderStatus.COMPLETED
-                }).select('total orderPlaced category')
+                }).select('total orderPlaced items.productId').populate({
+                    path: 'items.productId',
+                    select: 'category'
+                }).lean<CompletedOrder[]>()
 
-                console.log(currentMonthOrders)
+                const orderItems = [...monthlyOrders.flatMap(order => order.items)]
+                console.log(orderItems)
+                let catCounter: unknownShape = {}, orderByCategory:OrderItemsCategoryCounter[] = []
+                if (orderItems.length > 0) {
+
+                    orderItems.map((order: OrderItemPopulated) => {
+                        if (catCounter[order.productId.category]) {
+                            catCounter[order.productId.category] = catCounter[order.productId.category] + 1
+                        }
+                        else {
+                            catCounter[order.productId.category] = 1
+                        }
+                    })
+                    orderByCategory = Object.keys(catCounter).map(cat => ({
+                        cat,
+                        count: catCounter[cat]
+                    }))
+
+                    console.log(orderByCategory)
+
+                }
+
+                const totalOrders = monthlyOrders.length
+                const totalSales = monthlyOrders.reduce((sum, order) => sum + order.total, 0)
+
 
                 const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1
                 const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear
@@ -105,7 +130,6 @@ const analyticsResolver = {
                 const previousMonthstartDate = new Date(Date.UTC(previousYear, previousMonth, 1))
                 const previousMonthendDate = new Date(Date.UTC(previousYear, previousMonth + 1, 0))
 
-                console.log(previousMonthstartDate, previousMonthendDate)
                 const lastMonthOrders = await Order.find({
                     orderPlaced: {
                         $gte: previousMonthstartDate,
@@ -114,35 +138,29 @@ const analyticsResolver = {
                     status: OrderStatus.COMPLETED
                 }).select('total')
 
-                let change = {
-                    changeBy: 100,
-                    changeDirection: ChangeDirection.INCREASE
-                }
-                if (currentMonthOrders.length > 0 && lastMonthOrders.length > 0) {
-                    const percent = ((currentMonthOrders.length - lastMonthOrders.length) / lastMonthOrders.length) * 100
+                let changeInOrders = 0, changeInSales = 0
 
-                    change.changeBy = percent
+                if (monthlyOrders.length > 0 && lastMonthOrders.length > 0) {
+                    changeInOrders = ((monthlyOrders.length - lastMonthOrders.length) / lastMonthOrders.length) * 100
 
-                    if (percent > 0) {
-                        change.changeDirection = ChangeDirection.INCREASE
-                    }
-                    else if (percent < 0) {
-                        change.changeDirection = ChangeDirection.DECREASE
-                    }
-                    else {
-                        change.changeDirection = ChangeDirection.NO_CHANGE
-                    }
-                  
+                    const lastMonthSales = lastMonthOrders.reduce((sum, order) => sum + order.total, 0)
+                    changeInSales = ((totalSales - lastMonthSales) / lastMonthSales) * 100
+
                 }
-                else if (currentMonthOrders.length  < 1 ) {
-                    change = {
-                        changeBy: 0,
-                        changeDirection: ChangeDirection.NO_SALES
-                    }
+                else if (lastMonthOrders.length < 1) {
+                    changeInOrders = 100, changeInSales = 100
                 }
 
-                console.log(change)
-                throw new Error('working')
+                return {
+                    totalOrders,
+                    totalSales,
+                    monthlyOrders,
+                    changeInOrders,
+                    changeInSales,
+                    orderByCategory
+                }
+
+                // throw new Error('working')
 
                 // const monthlyStats = {
                 //     currentMonthOrders,
@@ -150,12 +168,12 @@ const analyticsResolver = {
                 // }
 
 
-                const currentMonthUsers = await User.find({
-                    registeredDate: {
-                        $gte: startDate,
-                        $lte: endDate
-                    }
-                }).select('id')
+                // const currentMonthUsers = await User.find({
+                //     registeredDate: {
+                //         $gte: startDate,
+                //         $lte: endDate
+                //     }
+                // }).select('id')
 
 
 

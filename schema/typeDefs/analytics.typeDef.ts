@@ -55,8 +55,22 @@ type CompletedOrderProduct {
 
     
     type UserAnalytics {
-        users: Float!,
+        users: Int!,
         changeInUsers: Float!
+    }
+
+    type Sale {
+        orderPlaced: Date!,
+        total: Float!
+
+    }
+
+    type LowProduct {
+        _id: ID!,
+        title: String!,
+        quantity: Int!,
+        heroImg: String!,
+        sku:String!
     }
 
     type Query {
@@ -65,6 +79,8 @@ type CompletedOrderProduct {
         salesAnalytics: SalesAnalytics
         userAnalytics: UserAnalytics
         totalLowStockProducts: [LowStockProduct],
+        salesOverTime: [Sale],
+        lowStockProducts: [LowProduct]
     }
 
 `

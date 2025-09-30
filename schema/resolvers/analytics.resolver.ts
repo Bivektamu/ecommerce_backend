@@ -4,6 +4,7 @@ import { CompletedOrder, ErrorCode, OrderItemPopulated, OrderItemsCategoryCounte
 import verifyUser from "../../utilities/verifyUser"
 
 import { currentMonthStartDate, currentMonthEndDate, previousMonthStartDate, previousMonthEndDate, startFiscalDate } from '../../utilities/getDates'
+import Product from "../../dataLayer/schema/Product"
 
 const analyticsResolver = {
     Query: {
@@ -163,10 +164,10 @@ const analyticsResolver = {
 
                 let changeInOrders = 0
 
-                if (currentMonthOrders > 0 && previousMonthOrders> 0) {
-                    changeInOrders = ((currentMonthOrders- previousMonthOrders) / previousMonthOrders) * 100
+                if (currentMonthOrders > 0 && previousMonthOrders > 0) {
+                    changeInOrders = ((currentMonthOrders - previousMonthOrders) / previousMonthOrders) * 100
                 }
-                else if (previousMonthOrders< 1) {
+                else if (previousMonthOrders < 1) {
                     changeInOrders = 100
                 }
 
@@ -206,7 +207,7 @@ const analyticsResolver = {
                     status: OrderStatus.COMPLETED
                 }).select('userId -_id').lean())
 
-                const uniqueCurrentMonthActiveUsers = (new Set(currentMonthActiveUsers.map(user=>(user.userId).toString())))
+                const uniqueCurrentMonthActiveUsers = (new Set(currentMonthActiveUsers.map(user => (user.userId).toString())))
 
 
                 const previousMonthActiveUsers = (await Order.find({
@@ -219,14 +220,14 @@ const analyticsResolver = {
 
                 console.log(previousMonthActiveUsers)
 
-                const uniquePreviousMonthActiveUsers = (new Set(previousMonthActiveUsers.map(user=>(user.userId).toString())))
+                const uniquePreviousMonthActiveUsers = (new Set(previousMonthActiveUsers.map(user => (user.userId).toString())))
 
                 let changeInUsers = 0
 
-                if (uniqueCurrentMonthActiveUsers.size > 0 && uniquePreviousMonthActiveUsers.size> 0) {
-                    changeInUsers = ((uniqueCurrentMonthActiveUsers.size- uniquePreviousMonthActiveUsers.size) / uniquePreviousMonthActiveUsers.size) * 100
+                if (uniqueCurrentMonthActiveUsers.size > 0 && uniquePreviousMonthActiveUsers.size > 0) {
+                    changeInUsers = ((uniqueCurrentMonthActiveUsers.size - uniquePreviousMonthActiveUsers.size) / uniquePreviousMonthActiveUsers.size) * 100
                 }
-                else if (uniquePreviousMonthActiveUsers.size< 1) {
+                else if (uniquePreviousMonthActiveUsers.size < 1) {
                     changeInUsers = 100
                 }
 
@@ -242,6 +243,81 @@ const analyticsResolver = {
             }
 
         },
+
+        salesOverTime: async (parent: any, args: any, context: any) => {
+            try {
+                if (!context.token) {
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                }
+                const user = verifyUser(context.token)
+
+                if (!user) {
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                }
+
+                if (!user || user?.role !== UserRole.ADMIN) {
+                    throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                }
+
+                const monthlySales = await Order.find({
+                    orderPlaced: {
+                        $gte: currentMonthStartDate,
+                        $lte: currentMonthEndDate
+                    },
+                    status: OrderStatus.COMPLETED
+                }).select('total orderPlaced -_id').lean()
+
+                return monthlySales
+
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+                }
+            }
+
+        },
+
+        lowStockProducts: async (parent: any, args: any, context: any) => {
+            try {
+                // if (!context.token) {
+                //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                // }
+                // const user = verifyUser(context.token)
+
+                // if (!user) {
+                //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                // }
+
+                // if (!user || user?.role !== UserRole.ADMIN) {
+                //     throw new Error(ErrorCode.NOT_AUTHENTICATED)
+                // }
+
+
+
+                const lowWtockProducts = await Product.find({
+                    quantity: {
+                        $lte: 51
+                    },
+                })
+                    .select('_id title sku quantity imgs.url')
+                    .lean()
+
+                if (lowWtockProducts.length > 0) {
+                    console.log(lowWtockProducts)
+                    const formatted = lowWtockProducts.map(({ imgs, ...rest }) => ({ ...rest, heroImg: imgs[0].url }))
+                    console.log(formatted)
+
+                    return formatted
+                }
+
+                return []
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message || ErrorCode.INTERNAL_SERVER_ERROR)
+                }
+            }
+
+        }
 
         /* 
         orderAnalytics: async (parent: any, args: any, context: any) => {

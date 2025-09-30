@@ -49,18 +49,21 @@ type CompletedOrderProduct {
         changeInSales: Float!
     }
     type OrderAnalytics {
-        totalOrders: Int!,
-        totalSales: Float!,
-        monthlyOrders:[CompletedOrder]!,
-        changeInOrders: Float!,
-        changeInSales: Float!,
-        orderByCategory: [OrderItemsCategoryCounter]
+        orders: Float!,
+        changeInOrders: Float!
+    }
+
+    
+    type UserAnalytics {
+        users: Float!,
+        changeInUsers: Float!
     }
 
     type Query {
         yearlyStats: YearlyStats
         orderAnalytics: OrderAnalytics
         salesAnalytics: SalesAnalytics
+        userAnalytics: UserAnalytics
         totalLowStockProducts: [LowStockProduct],
     }
 

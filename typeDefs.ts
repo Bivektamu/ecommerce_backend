@@ -113,13 +113,12 @@ export interface unknownShape {
 
 export interface CompletedOrder {
     _id: ObjectId,
-    total:number,
+    total: number,
     orderPlaced: Date,
     items: OrderItemPopulated[]
 }
 
- export type   OrderItemsCategoryCounter  = {
-        cat: string,
-        count: number
-    }
-    
+export type OrderItemsCategoryCounter = {
+    cat: string,
+    count: number
+}

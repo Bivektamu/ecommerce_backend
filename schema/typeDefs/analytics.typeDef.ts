@@ -44,6 +44,10 @@ type CompletedOrderProduct {
         count: Int!
     }
     
+    type SalesAnalytics {
+        sales: Float!,
+        changeInSales: Float!
+    }
     type OrderAnalytics {
         totalOrders: Int!,
         totalSales: Float!,
@@ -52,9 +56,11 @@ type CompletedOrderProduct {
         changeInSales: Float!,
         orderByCategory: [OrderItemsCategoryCounter]
     }
+
     type Query {
         yearlyStats: YearlyStats
         orderAnalytics: OrderAnalytics
+        salesAnalytics: SalesAnalytics
         totalLowStockProducts: [LowStockProduct],
     }
 
